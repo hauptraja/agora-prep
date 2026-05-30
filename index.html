@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- keep this personal CV/prep page out of search engines -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- phone "add to home screen" niceties -->
+<meta name="theme-color" content="#0e1411">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Agora Prep">
+<title>Agora Prep — Round-2 Interview Trainer</title>
+<style>
+/* ============================ DESIGN TOKENS ============================ */
+:root{
+  --bg:#0e1411;
+  --bg2:#121a16;
+  --panel:#16201b;
+  --panel2:#1b2620;
+  --code-bg:#10211a;
+  --text:#e8efe9;
+  --muted:#9fb1a6;
+  --faint:#6f827a;
+  --green:#2fae6a;
+  --green-d:#1f7a3d;
+  --green-soft:rgba(47,174,106,.14);
+  --amber:#d8a23a;
+  --amber-soft:rgba(216,162,58,.14);
+  --red:#e0614f;
+  --red-soft:rgba(224,97,79,.14);
+  --border:rgba(255,255,255,.09);
+  --border2:rgba(255,255,255,.06);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --radius:14px;
+  --maxw:880px;
+  --mono:"SF Mono","Cascadia Mono",Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(47,174,106,.07), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(31,122,61,.06), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:var(--green)}
+::selection{background:var(--green-soft)}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+
+/* ============================ HEADER + NAV ============================ */
+header.app{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg, rgba(14,20,17,.96), rgba(14,20,17,.86));
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.app-inner{max-width:var(--maxw);margin:0 auto;padding:14px 18px 0}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{
+  font-size:21px;margin:0;letter-spacing:.5px;font-weight:800;
+}
+.brand .dot{color:var(--green)}
+.brand .sub{color:var(--muted);font-size:13px;letter-spacing:.2px}
+nav.modes{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0 0;margin-top:4px}
+.nav-group{display:flex;flex-direction:column;gap:5px}
+.nav-group .glabel{
+  font-size:10.5px;text-transform:uppercase;letter-spacing:1.4px;color:var(--faint);
+  font-weight:700;padding-left:2px;
+}
+.nav-row{display:flex;gap:6px;flex-wrap:wrap}
+.nav-divider{width:1px;align-self:stretch;background:var(--border);margin:14px 2px 4px}
+button.tab{
+  appearance:none;border:1px solid transparent;background:transparent;color:var(--muted);
+  font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+  padding:7px 12px;border-radius:10px;transition:all .16s ease;white-space:nowrap;
+}
+button.tab:hover{color:var(--text);background:var(--panel)}
+button.tab.active{
+  color:var(--text);background:var(--green-soft);border-color:rgba(47,174,106,.35);
+  box-shadow:inset 0 0 0 1px rgba(47,174,106,.12);
+}
+.tabbar-spacer{height:12px}
+
+/* ============================ LAYOUT ============================ */
+main{max-width:var(--maxw);margin:0 auto;padding:26px 18px 90px}
+#view{display:block}
+#view>*{animation:rise .28s ease both}
+#view>*:nth-child(2){animation-delay:.04s}
+#view>*:nth-child(3){animation-delay:.08s}
+#view>*:nth-child(4){animation-delay:.12s}
+#view>*:nth-child(5){animation-delay:.16s}
+#view>*:nth-child(n+6){animation-delay:.2s}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#view>*{animation:none}}
+
+h2.mode-title{font-size:24px;margin:0 0 4px;letter-spacing:.3px;font-weight:800}
+p.mode-lede{color:var(--muted);margin:0 0 22px;max-width:62ch}
+
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;margin:0 0 16px;box-shadow:var(--shadow);
+}
+.panel h3{margin:0 0 10px;font-size:16px;letter-spacing:.2px}
+.muted{color:var(--muted)}
+.faint{color:var(--faint)}
+.pill{
+  display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;
+  background:var(--panel);border:1px solid var(--border);color:var(--muted);
+}
+.pill.green{color:var(--green);border-color:rgba(47,174,106,.4);background:var(--green-soft)}
+.pill.amber{color:var(--amber);border-color:rgba(216,162,58,.4);background:var(--amber-soft)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* buttons */
+.btn{
+  appearance:none;font-family:inherit;font-weight:650;font-size:14px;cursor:pointer;
+  border-radius:10px;padding:9px 16px;transition:all .15s ease;
+  background:var(--panel);border:1px solid var(--border);color:var(--text);
+}
+.btn:hover{border-color:var(--green-d);background:var(--panel2)}
+.btn.primary{background:var(--green-d);border-color:var(--green);color:#eafff2}
+.btn.primary:hover{background:var(--green);color:#06140c}
+.btn.ghost{background:transparent}
+.btn.amber{background:var(--amber-soft);border-color:rgba(216,162,58,.45);color:var(--amber)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:6px 11px;font-size:13px}
+
+select,input[type=text]{
+  font-family:inherit;font-size:14px;color:var(--text);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;padding:8px 12px;
+}
+select:focus{border-color:var(--green-d)}
+label.field{display:inline-flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:600}
+
+/* code blocks */
+code,.code{font-family:var(--mono);font-size:13px}
+.inline-code{background:var(--code-bg);border:1px solid var(--border2);border-radius:6px;padding:1px 6px;color:#b8e6cc}
+pre.code{
+  font-family:var(--mono);font-size:12.7px;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+  background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--green-d);
+  border-radius:10px;padding:13px 15px;margin:10px 0;color:#cfe9da;overflow-x:auto;
+}
+pre.code .kw{color:#79c2ff}
+pre.code .str{color:#e6c07b}
+pre.code .fn{color:#74e0a8}
+
+/* ============================ MODE 1 — PIPELINE ============================ */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:6px 0 4px}
+.flow .node{
+  background:var(--green-soft);border:1px solid rgba(47,174,106,.4);color:var(--text);
+  border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;white-space:nowrap;
+}
+.flow .arrow{color:var(--green);font-weight:700;padding:0 10px;font-size:18px}
+.flow .node small{display:block;color:var(--muted);font-weight:500;font-size:11px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.chip{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12.5px}
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:620px){.split2{grid-template-columns:1fr}}
+.collist{display:flex;flex-direction:column;gap:6px}
+.collist .item{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+.collist .item .mk{color:var(--green);font-weight:800}
+.collist.red .item .mk{color:var(--amber)}
+
+details.step{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);border-radius:12px;margin:0 0 10px;overflow:hidden;
+}
+details.step>summary{
+  list-style:none;cursor:pointer;padding:14px 16px;display:flex;gap:12px;align-items:center;
+  font-weight:700;font-size:15px;
+}
+details.step>summary::-webkit-details-marker{display:none}
+details.step>summary .num{
+  flex:0 0 auto;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
+  background:var(--green-soft);color:var(--green);font-weight:800;font-size:14px;border:1px solid rgba(47,174,106,.35);
+}
+details.step>summary .chev{margin-left:auto;color:var(--faint);transition:transform .2s ease}
+details.step[open]>summary .chev{transform:rotate(90deg)}
+details.step .body{padding:2px 16px 16px 56px}
+.kvblock{margin:8px 0}
+.kvblock .k{font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700;color:var(--green)}
+.kvblock.why .k{color:var(--amber)}
+.kvblock.alt .k{color:var(--muted)}
+.kvblock .v{font-size:14px;margin-top:2px}
+
+/* ============================ MODE 2 — FLASHCARDS ============================ */
+.fc-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+.fc-counter{font-size:13px;color:var(--muted);font-weight:600}
+.flip-wrap{perspective:1600px;margin:6px 0 14px}
+.flip{
+  position:relative;width:100%;min-height:260px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,.1,.2,1);
+  border-radius:16px;
+}
+.flip.flipped{transform:rotateY(180deg)}
+@media (prefers-reduced-motion:reduce){.flip{transition:none}}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:16px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.face.front{background:linear-gradient(160deg,#172420,#13201a)}
+.face.back{background:linear-gradient(160deg,#15241c,#102018);transform:rotateY(180deg);border-color:rgba(47,174,106,.3)}
+.face .cat{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--green);font-weight:700;margin-bottom:12px}
+.face .q{font-size:20px;font-weight:700;line-height:1.4}
+.face .a{font-size:16.5px;line-height:1.5}
+.face .hint{margin-top:18px;font-size:12px;color:var(--faint);font-style:italic}
+.face .flipnote{margin-top:auto;font-size:11.5px;color:var(--faint);padding-top:14px}
+.fc-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.known-badge{font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
+.known-badge.yes{color:var(--green);background:var(--green-soft)}
+.known-badge.no{color:var(--muted);background:var(--panel)}
+
+/* ============================ MODE 3 — QUIZ ============================ */
+.bestgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px}
+.bestcard{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 13px}
+.bestcard .c{font-size:12px;color:var(--muted);font-weight:600}
+.bestcard .s{font-size:20px;font-weight:800;margin-top:3px}
+.bestcard .s small{font-size:12px;color:var(--faint);font-weight:600}
+.qprogress{height:6px;background:var(--panel);border-radius:999px;overflow:hidden;margin:6px 0 18px;border:1px solid var(--border2)}
+.qprogress>i{display:block;height:100%;background:linear-gradient(90deg,var(--green-d),var(--green));transition:width .3s ease}
+.opt{
+  display:block;width:100%;text-align:left;margin:8px 0;padding:13px 15px;border-radius:11px;
+  background:var(--panel);border:1px solid var(--border);color:var(--text);font-family:inherit;
+  font-size:14.5px;cursor:pointer;transition:all .14s ease;
+}
+.opt:hover:not(:disabled){border-color:var(--green-d);background:var(--panel2)}
+.opt .lt{display:inline-block;width:24px;color:var(--faint);font-weight:700}
+.opt.correct{background:var(--green-soft);border-color:var(--green);color:#dffff0}
+.opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.opt:disabled{cursor:default}
+.explain{
+  margin:12px 0 4px;padding:12px 15px;border-radius:11px;border-left:3px solid var(--green);
+  background:var(--green-soft);font-size:14px;
+}
+.explain.bad{border-left-color:var(--amber);background:var(--amber-soft)}
+.explain .lbl{font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--green)}
+.explain.bad .lbl{color:var(--amber)}
+.scorebar{font-weight:700;font-size:14px}
+.wrong-item{border-bottom:1px solid var(--border2);padding:12px 0}
+.wrong-item:last-child{border-bottom:none}
+.wrong-item .q{font-weight:700;margin-bottom:5px}
+
+/* ============================ REVEAL CARDS (Modes 4/5/6/7) ============================ */
+.jumpbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.jumpbar button{
+  appearance:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;
+  width:30px;height:30px;border-radius:8px;background:var(--panel);border:1px solid var(--border);color:var(--muted);
+}
+.jumpbar button:hover{color:var(--text);border-color:var(--green-d)}
+.jumpbar button.cur{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.bigcard{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow);
+}
+.bigcard .scenario{font-size:18px;font-weight:700;line-height:1.45;margin-bottom:10px}
+.bigcard .prompt{color:var(--muted);font-size:14px;margin-bottom:6px}
+.sayloud{
+  display:flex;gap:9px;align-items:center;margin:14px 0;padding:10px 13px;border-radius:10px;
+  background:var(--amber-soft);border:1px solid rgba(216,162,58,.35);color:var(--amber);
+  font-weight:700;font-size:13.5px;
+}
+.block{margin:12px 0;padding:12px 15px;border-radius:11px;background:var(--code-bg);border:1px solid var(--border2)}
+.block .blab{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;margin-bottom:4px}
+.block.did .blab{color:var(--green)}
+.block.why .blab{color:var(--amber)}
+.block.alt .blab{color:#79c2ff}
+.block.trade .blab{color:var(--muted)}
+.block .bv{font-size:14.5px;line-height:1.5}
+.navrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.counter-lg{font-size:13px;color:var(--muted);font-weight:700}
+
+/* Mock */
+.timer{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--amber);min-width:62px;text-align:center}
+.timer.off{color:var(--faint)}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:600;cursor:pointer}
+.toggle input{width:16px;height:16px;accent-color:var(--green)}
+.scratch{
+  width:100%;min-height:130px;font-family:var(--mono);font-size:13px;line-height:1.6;
+  background:var(--code-bg);border:1px dashed rgba(255,255,255,.18);border-radius:11px;
+  padding:12px 14px;color:#cfe9da;resize:vertical;
+}
+.scratch:focus{border-color:var(--green-d);border-style:solid}
+.scratch-note{font-size:11.5px;color:var(--faint);margin:4px 0 0}
+
+/* footer + self-test */
+footer.app{
+  max-width:var(--maxw);margin:0 auto;padding:0 18px 40px;color:var(--faint);font-size:12.5px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;
+}
+#selftest-panel{margin-top:14px}
+.st-line{display:flex;gap:9px;align-items:flex-start;font-size:13px;padding:4px 0;font-family:var(--mono)}
+.st-pass{color:var(--green)}
+.st-fail{color:var(--red)}
+.st-summary{font-weight:800;font-size:14px;margin:8px 0;font-family:var(--sans)}
+.kbd{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="app-inner">
+    <div class="brand">
+      <h1>Agora<span class="dot">·</span>Prep</h1>
+      <span class="sub">Round-2 interview trainer — Student Assistant: Energy Data Engineer</span>
+    </div>
+    <nav class="modes" id="nav" aria-label="Study modes"></nav>
+    <div class="tabbar-spacer"></div>
+  </div>
+</header>
+
+<main>
+  <div id="view" role="region" aria-live="polite"></div>
+</main>
+
+<footer class="app">
+  <span>Runs fully offline · progress saved locally in your browser (localStorage) · no external requests</span>
+  <button class="btn sm ghost" id="selftest-btn" type="button">Run self-test</button>
+</footer>
+<div style="max-width:var(--maxw);margin:0 auto;padding:0 18px"><div id="selftest-panel"></div></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   AGORA PREP — single-file offline interview trainer
+   All study content lives in CONTENT below (easy to edit later).
+   No frameworks, no network, no build step. Vanilla JS.
+   ===================================================================== */
+
+/* ============================ CONTENT ============================ */
+const FUEL_TYPES = [
+  "Biomass","Dam Hydro","Geothermal","Hard Coal","Lignite","Natural Gas",
+  "Non-renewable waste","Nuclear","Oil","Other fossil fuel","Other renewables",
+  "Pumped storage generation","Run-of-River Hydro","Solar","Wind offshore","Wind onshore"
+];
+const RENEWABLE = ["Biomass","Dam Hydro","Geothermal","Other renewables","Run-of-River Hydro","Solar","Wind offshore","Wind onshore","Pumped storage generation (debatable)"];
+const NON_RENEWABLE = ["Hard Coal","Lignite","Natural Gas","Non-renewable waste","Nuclear","Oil","Other fossil fuel"];
+
+const CONTENT = {
+  /* ---- Mode 1: the 8 transformation steps ---- */
+  pipelineSteps: [
+    { n:1, title:"Germany only + set index",
+      what:"Keep only the German rows and set the timestamp (date_id) as the index.",
+      why:"The task only concerns Germany; a datetime index makes the later time operations (resample, timezone convert) work directly.",
+      alt:"Could filter later, but doing it first shrinks the data early." },
+    { n:2, title:"Pivot to wide",
+      what:"Pivot so each generation type becomes its own column. Used pivot_table with aggfunc=\"first\" rather than pivot.",
+      why:"Makes per-fuel cleaning, the totals, and the daily resample far easier (one column per fuel). pivot_table tolerates accidental duplicate (timestamp, fuel) pairs instead of erroring.",
+      alt:"Plain pivot() — but it throws on duplicates." },
+    { n:3, title:"Flag deliberately-large outliers",
+      what:"For each column, flag values above the 75th percentile + 5×IQR and set them to NaN (to be filled in step 4).",
+      why:"The planted values are orders of magnitude above real generation, so a wide IQR fence catches them without touching legitimate peaks; IQR is robust because it doesn't rely on the mean, which the outliers would distort.",
+      alt:"z-score (distorted by the outliers), rolling median/MAD (good for drifting baselines), or a fixed capacity ceiling per fuel (most domain-aware if you know installed capacity)." },
+    { n:4, title:"Fill missing cells",
+      what:"Time-based interpolation, then forward/back fill for any gaps at the very start/end.",
+      why:"Generation is a continuous hourly series that changes smoothly, so estimating from the neighbouring hours is more realistic than a column mean (which flattens the daily pattern) or a single carried value.",
+      alt:"forward-fill (flat-lines longer gaps), same-hour-of-day/seasonal (better for a whole missing day), column mean (worst)." },
+    { n:5, title:"UTC → CET (Europe/Berlin)",
+      what:"Localise the naive index to UTC, then convert to Europe/Berlin.",
+      why:"The data spans the 30 Oct 2022 daylight-saving change, so October is CEST (+2) and Nov–Dec is CET (+1). Europe/Berlin applies the correct offset on each side automatically; a hard-coded +1 would mislabel every October hour.",
+      alt:"fixed offset Etc/GMT-1 (literal +1, but wrong for October)." },
+    { n:6, title:"Categorise + append totals",
+      what:"Map every fuel to renewable/non-renewable, assert nothing is uncategorised, then append two total columns (Renewable, Non-renewable).",
+      why:"Needed for the renewable-share analysis; the assertion catches any new/unmapped fuel loudly.",
+      alt:"NOTE: pumped storage is kept under renewable (hydro-based, shows as positive generation, task says classify all sources) but it's really storage, so excluding it is an equally defensible choice. Nuclear is non-renewable (uranium is finite) though low-carbon." },
+    { n:7, title:"Daily aggregation (separate dataset)",
+      what:"Resample the hourly wide table to daily totals with resample(\"D\").sum(), leaving the hourly one untouched.",
+      why:"Time-aware grouping on a real datetime index; sum gives total daily energy.",
+      alt:"NOTE: because of the timezone conversion the daily table has a small partial day at each end (1 Oct and 1 Jan 2023) — expected when aggregating by local calendar day." },
+    { n:8, title:"Reshape both back to long",
+      what:"Melt the hourly and daily wide tables back to the 4 columns ['date_id','region','generation','value'], re-inserting region='Germany'.",
+      why:"The required output format; long format loads cleanly into the database tables.",
+      alt:"Wide is convenient for processing, but the deliverable and the DB schema are long." }
+  ],
+
+  /* ---- Mode 1: Task 2 views ---- */
+  views: [
+    { name:"wind_solar_comp_h",
+      desc:"Per timestamp returns 1 if wind (onshore+offshore) > solar, 0 if equal, -1 if less. Because the table is long, sum the wind rows and solar rows per timestamp in a subquery first (using SUM(value) FILTER (WHERE generation IN (...)) and COALESCE(...,0)), then compare with CASE WHEN." },
+    { name:"pow_gen_de_m",
+      desc:"Monthly totals built from the DAILY table using date_trunc('month', date_id) then GROUP BY." },
+    { name:"pow_gen_share_de_h",
+      desc:"Each source's % of the hour's total via window function SUM(value) OVER (PARTITION BY date_id); 100.0 * forces decimal division; NULLIF(...,0) avoids divide-by-zero. CRITICAL: excludes the Renewable/Non-renewable total rows (WHERE generation NOT IN ('Renewable','Non-renewable')) — otherwise the denominator doubles and every share is halved. Verified: shares then sum to 100% per hour." }
+  ],
+
+  /* ---- Mode 2: flashcards ---- */
+  flashcards: [
+    // Energy Domain
+    {id:"fc1", category:"Energy Domain", front:"What is Agora Energiewende, and what does 'Energiewende' mean?", back:"A Berlin energy/climate think tank. 'Energiewende' = Germany's transition to renewables / a low-carbon energy system."},
+    {id:"fc2", category:"Energy Domain", front:"Generation vs capacity vs demand/load?", back:"Generation = electricity actually produced (your data). Capacity = the maximum a plant could produce. Demand/load = what consumers actually used."},
+    {id:"fc3", category:"Energy Domain", front:"What are 'variable' renewables?", back:"Wind & solar — weather-driven, produced when the resource is available, not on demand."},
+    {id:"fc4", category:"Energy Domain", front:"What are 'dispatchable' sources?", back:"Gas, coal, hydro reservoirs and pumped storage — they can be ramped up or down on demand."},
+    {id:"fc5", category:"Energy Domain", front:"What are 'baseload' sources?", back:"Nuclear and lignite — they run steadily as a constant background supply."},
+    {id:"fc6", category:"Energy Domain", front:"The 4 countries in the original dataset, and why each was chosen?", back:"Germany (mixed / transitioning), France (nuclear-dominated ~2/3), Denmark (wind leader ~half), Austria (hydro + Alpine pumped storage)."},
+    {id:"fc7", category:"Energy Domain", front:"When did Germany's last nuclear reactors shut, and why does that matter here?", back:"April 2023 — so nuclear is still present in the Q4 2022 data."},
+    {id:"fc8", category:"Energy Domain", front:"Is 'renewable' the same as 'clean / low-carbon'?", back:"No. Nuclear is low-carbon but not renewable; biomass is renewable but its carbon-neutrality is debated. Renewable (replenished) ≠ clean (low-carbon)."},
+    {id:"fc9", category:"Energy Domain", front:"What is 'non-renewable waste'?", back:"The fossil-derived fraction of waste burned for power (e.g. plastics) — counted as non-renewable."},
+    // Renewable split
+    {id:"fc10", category:"Energy Domain", front:"Which sources did you classify as RENEWABLE?", back:"Biomass, Dam Hydro, Geothermal, Other renewables, Run-of-River Hydro, Solar, Wind offshore, Wind onshore, and Pumped storage (debatable)."},
+    {id:"fc11", category:"Energy Domain", front:"Which sources did you classify as NON-RENEWABLE?", back:"Hard Coal, Lignite, Natural Gas, Non-renewable waste, Nuclear, Oil, Other fossil fuel."},
+    {id:"fc12", category:"Energy Domain", front:"Why is nuclear non-renewable but still low-carbon?", back:"Uranium is finite, so it's non-renewable — but fission emits very little CO2, so it's low-carbon."},
+    // Timezone
+    {id:"fc13", category:"Timezone", front:"Why convert to Europe/Berlin instead of adding a fixed +1 for CET?", back:"The data spans the 30 Oct 2022 DST change, so October is CEST (+2) and Nov–Dec is CET (+1). Europe/Berlin applies the correct offset on each side automatically; a flat +1 would mislabel every October hour."},
+    {id:"fc14", category:"Timezone", front:"At the autumn DST switch local 02:00 occurs twice — why isn't your data corrupted?", back:"You convert FROM UTC, which never repeats, so the two 02:00 hours keep different offsets and stay distinct."},
+    {id:"fc15", category:"Timezone", front:"Why is energy data stored in UTC?", back:"No DST jumps, so timestamps are unambiguous and comparable across countries; convert to local time only for analysis."},
+    {id:"fc16", category:"Timezone", front:"Why TIMESTAMPTZ not plain TIMESTAMP for the timestamps?", back:"TIMESTAMPTZ stores the exact instant with the +02:00/+01:00 offset the data carries; plain TIMESTAMP drops the zone."},
+    // Data Cleaning
+    {id:"fc17", category:"Data Cleaning", front:"IQR fence vs z-score for the planted outliers — why IQR?", back:"IQR is robust: it doesn't rely on the mean/SD, which the outliers themselves distort. The mean and SD get skewed by the very values you're trying to detect."},
+    {id:"fc18", category:"Data Cleaning", front:"What outlier fence did you use?", back:"Per column, flag values above Q3 + 5×IQR and set them to NaN. A wide fence catches the absurd planted values without touching real peaks."},
+    {id:"fc19", category:"Data Cleaning", front:"Why time-based interpolation for missing hourly values?", back:"Generation changes smoothly hour to hour, so neighbouring values estimate a gap better than a flat column mean (which would flatten the daily pattern, e.g. solar's midday peak)."},
+    {id:"fc20", category:"Data Cleaning", front:"Why set outliers to NaN and then impute, rather than capping them?", back:"It lets one consistent fill method handle both the planted outliers and the genuine gaps."},
+    // Pandas
+    {id:"fc21", category:"Pandas", front:"Why pivot_table instead of pivot for the wide reshape?", back:"pivot_table tolerates duplicate (timestamp, fuel) pairs via aggfunc='first'; plain pivot errors on duplicates. It's defensive."},
+    {id:"fc22", category:"Pandas", front:"Why resample('D').sum() instead of groupby on the date?", back:"The index is a real datetime, so resample does time-aware grouping; sum gives the daily total energy. It's the idiomatic time-bucketing."},
+    {id:"fc23", category:"Pandas", front:"Why pivot to wide and then melt back to long?", back:"Cleaning, totals and the daily resample are far easier with one column per fuel; the required output (and DB schema) is long, so you reshape back at the end."},
+    {id:"fc24", category:"Pandas", front:"Why supply the column names manually after the API call?", back:"The API returned a list of bare [timestamp, region, generation, value] rows with no header, so names had to be provided in the order returned."},
+    // SQL & Postgres
+    {id:"fc25", category:"SQL & Postgres", front:"What does the view wind_solar_comp_h do?", back:"Per timestamp returns 1 if wind (on+offshore) > solar, 0 if equal, -1 if less. Because the table is long, it sums wind & solar rows per timestamp in a subquery (FILTER + COALESCE) then compares with CASE WHEN."},
+    {id:"fc26", category:"SQL & Postgres", front:"What does the view pow_gen_de_m do?", back:"Monthly totals built from the DAILY table using date_trunc('month', date_id) then GROUP BY."},
+    {id:"fc27", category:"SQL & Postgres", front:"What does the view pow_gen_share_de_h do, and the critical gotcha?", back:"Each source's % of the hour's total via SUM(value) OVER (PARTITION BY date_id); 100.0* forces decimal division; NULLIF(...,0) avoids divide-by-zero. CRITICAL: excludes the Renewable/Non-renewable total rows, or the denominator doubles and every share is halved."},
+    {id:"fc28", category:"SQL & Postgres", front:"View vs materialized view?", back:"A view recomputes on every query and is always fresh; a materialized view stores the result for speed but must be refreshed. Trade-off: freshness vs read speed."},
+    {id:"fc29", category:"SQL & Postgres", front:"Role vs user in PostgreSQL?", back:"A 'user' is just a role with LOGIN — there's no separate user object."},
+    {id:"fc30", category:"SQL & Postgres", front:"Do object privileges AND attributes both inherit through role membership?", back:"No. Object privileges (SELECT) inherit through membership; attributes like SUPERUSER and LOGIN do NOT — they must be set on the role itself."},
+    {id:"fc31", category:"SQL & Postgres", front:"pg_dump vs pg_dumpall --roles-only?", back:"pg_dump exports one database (tables, data, views) but NOT roles; pg_dumpall --roles-only exports the cluster-level roles separately."},
+    {id:"fc32", category:"SQL & Postgres", front:"The API key gotcha — header vs query parameter?", back:"The key only authenticates as an HTTP header. As a query param the request reached the server (HTTP 200) but failed at the APPLICATION level ('Key not found'). Moving it to a header returned the data."},
+    {id:"fc33", category:"SQL & Postgres", front:"What does NULLIF(x, 0) do, and why use it in the share view?", back:"Returns NULL when x = 0, so the division yields NULL instead of erroring — it guards against divide-by-zero in the per-hour share."},
+    {id:"fc34", category:"SQL & Postgres", front:"What does SUM(value) OVER (PARTITION BY date_id) give you?", back:"The per-timestamp total WITHOUT collapsing the rows, so each row can be divided by its own hour's total. Window functions compute across a group while keeping individual rows."},
+    {id:"fc35", category:"SQL & Postgres", front:"Why does the daily table have a partial day at each end?", back:"The timezone conversion shifts hours, leaving a small partial day at 1 Oct and 1 Jan 2023 — expected when aggregating by local calendar day."},
+    {id:"fc36", category:"SQL & Postgres", front:"Why if_exists='append' rather than 'replace' when loading?", back:"Append loads into the schema you defined (TIMESTAMPTZ/TEXT/DOUBLE); replace would drop the table and let pandas guess column types."},
+    // My Decisions
+    {id:"fc37", category:"My Decisions", front:"Why classify pumped storage as renewable — and the caveat?", back:"It's hydro-based, shows as positive generation, and the task says classify all sources. Caveat: it's really storage, so it can double-count energy; excluding it is an equally defensible one-line change."},
+    {id:"fc38", category:"My Decisions", front:"What made the database load idempotent?", back:"Truncate-then-append, so re-running can't create duplicates. I actually hit doubled row counts once, which is how I caught it."},
+    // Career & fit (CV cards)
+    {id:"fc39", category:"Career & fit", front:"What is Skontro (one line)?", back:"An open-source, German-compliant multi-tenant mini-ERP (invoicing/accounting) built with Laravel 11, Vue 3 + TypeScript, PostgreSQL and Docker."},
+    {id:"fc40", category:"Career & fit", front:"Why handle money as integer cents (not floats)?", back:"Floats can't represent many decimals exactly, so sums drift; integer cents keep arithmetic exact — required precision for tax / German e-invoicing (EN 16931 / ZUGFeRD)."},
+    {id:"fc41", category:"Career & fit", front:"What is multi-tenancy, and how did you isolate data?", back:"One app instance serving many customers (tenants) where each tenant's data is invisible to the others. Enforced via strict tenant-scoped queries, cookie auth and RBAC."},
+    {id:"fc42", category:"Career & fit", front:"The Docker port lesson from the assessment?", back:"A containerised Postgres held port 5432. Diagnose which process actually owns the port (Get-NetTCPConnection → Get-Process), then move the native server to 5433/5444 and update every connection string."},
+    {id:"fc43", category:"Career & fit", front:"Why PostgreSQL (over MySQL/Mongo)?", back:"Robust, standards-compliant, strong on data integrity, transactions and advanced SQL (constraints, window functions) — well suited to financial and high-stakes data."},
+    {id:"fc44", category:"Career & fit", front:"Why are you moving from software engineering into data science?", back:"I enjoy turning messy real-world data into something reliable and useful, and want to deepen that (hence the MSc). Engineering gives production discipline; the MSc adds analytical depth."},
+    {id:"fc45", category:"Career & fit", front:"Your German and English levels?", back:"German A1 and actively improving; English C1 (TOEFL 100), I work fluently in English and have navigated German-compliance domains (EN 16931/ZUGFeRD)."},
+    {id:"fc46", category:"Career & fit", front:"What is an invoice state machine, and why audit it?", back:"A defined set of allowed states (draft → issued → paid) with only legal transitions, plus an audit trail of each change — prevents invalid states and gives a tamper-evident history."},
+    {id:"fc47", category:"Career & fit", front:"'Atomic sequential document numbering safe under concurrency' — meaning?", back:"Invoice numbers stay gap-free and unique even if two requests create an invoice at the same instant; the allocation is atomic so each number is issued exactly once."}
+  ],
+
+  /* ---- Mode 3: quiz (answer index is 0-based) ---- */
+  quiz: [
+    {id:"q1", category:"Timezone", q:"Why convert to Europe/Berlin instead of adding a fixed +1 for CET?",
+      options:["It's faster","The data spans the 30 Oct 2022 DST change, so Oct is +2 and Nov–Dec is +1; Berlin applies each automatically","CET doesn't exist in pandas","To avoid leap years"], answer:1,
+      explain:"October is on summer time (CEST, +2); a flat +1 would mislabel every October hour."},
+    {id:"q2", category:"Timezone", q:"At the autumn DST switch, local 02:00–02:59 occurs twice. Why isn't your data corrupted?",
+      options:["pandas deletes duplicates","You convert FROM UTC, which never repeats, so the two hours keep different offsets and stay distinct","You dropped October","It is corrupted"], answer:1,
+      explain:"Converting from UTC avoids the ambiguous-local-time problem entirely."},
+    {id:"q3", category:"Data Cleaning", q:"Why an IQR fence rather than a z-score for the planted outliers?",
+      options:["IQR is newer","IQR is robust — it doesn't rely on the mean/SD, which the outliers themselves distort","z-score can't handle decimals","No reason"], answer:1,
+      explain:"The mean and SD are skewed by the very outliers you're trying to detect."},
+    {id:"q4", category:"Data Cleaning", q:"Why time-based interpolation for missing hourly values?",
+      options:["It's the default","Generation changes smoothly hour to hour, so neighbouring values estimate a gap better than a flat mean","It deletes gaps","To save memory"], answer:1,
+      explain:"A column mean would flatten the daily pattern (e.g. solar's midday peak)."},
+    {id:"q5", category:"SQL & Postgres", q:"In pow_gen_share_de_h, why the WHERE generation NOT IN ('Renewable','Non-renewable')?",
+      options:["Style","Those total rows would double the per-hour denominator and halve every share","They're null","To sort"], answer:1,
+      explain:"With them excluded, shares correctly sum to 100% per timestamp."},
+    {id:"q6", category:"SQL & Postgres", q:"Why does administrator get SUPERUSER directly instead of just via membership of admin?",
+      options:["Convenience","The SUPERUSER attribute is NOT inherited through role membership; only object privileges like SELECT are","admin isn't a superuser","It doesn't"], answer:1,
+      explain:"Attributes (SUPERUSER, LOGIN) must be set on the role itself."},
+    {id:"q7", category:"SQL & Postgres", q:"Difference between a view and a materialized view?",
+      options:["None","A view recomputes on every query and is always fresh; a materialized view stores the result for speed but must be refreshed","Views store data","Materialized views are temporary"], answer:1,
+      explain:"Trade-off is freshness vs read speed."},
+    {id:"q8", category:"SQL & Postgres", q:"Why if_exists=\"append\" rather than \"replace\" when loading?",
+      options:["Faster","Append loads into the schema you defined; replace would drop the table and let pandas guess column types","Replace is deprecated","No difference"], answer:1,
+      explain:"You want your TIMESTAMPTZ/TEXT/DOUBLE schema preserved."},
+    {id:"q9", category:"Pandas", q:"Why pivot_table instead of pivot for the wide reshape?",
+      options:["Looks nicer","pivot_table tolerates duplicate (timestamp, fuel) pairs via aggfunc; plain pivot errors on duplicates","pivot is removed","Speed"], answer:1,
+      explain:"Defensive against accidental duplicates in the source."},
+    {id:"q10", category:"Pandas", q:"Why resample(\"D\").sum() instead of groupby on the date?",
+      options:["Random","The index is a real datetime, so resample does time-aware grouping; sum gives daily total energy","groupby can't sum","To rename columns"], answer:1,
+      explain:"resample is the idiomatic time-bucketing on a datetime index."},
+    {id:"q11", category:"Energy Domain", q:"Is nuclear renewable?",
+      options:["Yes","No — uranium is finite, so it's non-renewable, though it is low-carbon","Only in France","Yes, if recycled"], answer:1,
+      explain:"Renewable (replenished) ≠ clean (low-carbon)."},
+    {id:"q12", category:"Energy Domain", q:"Difference between generation and capacity?",
+      options:["Same thing","Generation is electricity actually produced; capacity is the maximum a plant could produce","Capacity is hourly","Generation is yearly only"], answer:1,
+      explain:"Solar capacity is high but generation is zero at night."},
+    {id:"q13", category:"Energy Domain", q:"Why was pumped storage a debatable classification?",
+      options:["It's foreign","It's electricity storage, not primary generation, so counting its output can double-count energy","It's fossil","It's tiny"], answer:1,
+      explain:"Water is pumped up using surplus power and released later."},
+    {id:"q14", category:"Energy Domain", q:"Why is the API key rejected as a query parameter but accepted as a header?",
+      options:["Encoding bug","The API only authenticates the key in the header; as a query param the request still reaches the server (HTTP 200) but fails at the application level","The key expired","HTTPS"], answer:1,
+      explain:"\"Key not found\" was an application-level error, not a transport error."},
+    {id:"q15", category:"Data Cleaning", q:"Why set outliers to NaN and then impute, rather than capping them?",
+      options:["Less code","It lets one consistent fill method handle both the planted outliers and the genuine gaps","Capping is illegal","NaN is faster"], answer:1,
+      explain:"Outliers and gaps then get the same treatment."},
+    {id:"q16", category:"SQL & Postgres", q:"What does SUM(value) OVER (PARTITION BY date_id) give you?",
+      options:["A grand total","The per-timestamp total without collapsing the rows, so each row can be divided by its hour's total","A running average","Nothing"], answer:1,
+      explain:"Window functions compute across a group while keeping individual rows."},
+    {id:"q17", category:"SQL & Postgres", q:"Why pg_dumpall --roles-only in addition to pg_dump?",
+      options:["Backup twice","Roles are cluster-level and not contained in a single-database dump","It compresses","For speed"], answer:1,
+      explain:"pg_dump covers one database's tables/data/views only."},
+    {id:"q18", category:"Pandas", q:"Why supply column names manually after the API call?",
+      options:["Preference","The API returned a list of rows with no header, so names had to be provided in the order returned","pandas requires it always","To translate"], answer:1,
+      explain:"The payload data was bare [timestamp, region, generation, value] lists."}
+  ],
+
+  /* ---- Mode 4: reasoning drill ---- */
+  reasoning: [
+    {id:"r1", title:"Handling the deliberately-large outliers",
+      scenario:"Some values were deliberately planted far larger than any real generation. How do you remove them without harming genuine peaks?",
+      did:"Flagged per-column values above Q3 + 5×IQR, set them to NaN, and filled them along with the real gaps.",
+      why:"Planted values are far larger than real generation; a wide IQR fence catches them without touching real peaks; IQR is robust to the outliers themselves.",
+      alternatives:"z-score, rolling median/MAD, or a fixed capacity ceiling per fuel.",
+      tradeoff:"With a known per-fuel maximum, a capacity cap is more principled; for a drifting baseline a rolling median is better. My fence is simple and defensible for clearly-absurd planted values."},
+    {id:"r2", title:"Filling the missing values",
+      scenario:"After flagging outliers as NaN you also have genuine gaps. How do you fill them?",
+      did:"Time-based interpolation, then ffill/bfill at the edges.",
+      why:"It's a continuous, smooth hourly series — neighbouring values estimate a gap well.",
+      alternatives:"same-hour-of-day, seasonal, forward-fill, or column mean.",
+      tradeoff:"For a long outage I'd use same-hour-of-day; if a value were missing because a plant was off, zero might be the truth, so I'd check WHY it's missing first."},
+    {id:"r3", title:"UTC → Europe/Berlin (not a fixed +1)",
+      scenario:"The series is naive UTC and spans the 30 Oct 2022 DST change. How do you get correct German local time?",
+      did:"tz_localize(\"UTC\").tz_convert(\"Europe/Berlin\").",
+      why:"Data crosses the 30 Oct 2022 DST change; Berlin applies +2 then +1 automatically.",
+      alternatives:"fixed Etc/GMT-1 (+1 everywhere).",
+      tradeoff:"A flat +1 mislabels October; the duplicate 02:00 hour isn't a problem because I convert from UTC, which never repeats."},
+    {id:"r4", title:"Classifying pumped storage as renewable",
+      scenario:"Pumped storage shows positive generation but is really electricity storage. Renewable or not?",
+      did:"Kept it under renewable.",
+      why:"It's hydro-based, shows as positive generation, and the task said to classify all sources.",
+      alternatives:"exclude it, or track storage separately.",
+      tradeoff:"It's really storage, so it can double-count energy; excluding it is more rigorous and is a one-line change. The choice depends on whether you want total grid output or primary energy by source."},
+    {id:"r5", title:"Views, not new tables, for monthly & share",
+      scenario:"Monthly totals and per-hour shares are needed. Build new tables, or views?",
+      did:"Created SQL views.",
+      why:"They always reflect current data and store nothing extra.",
+      alternatives:"materialized views, or precomputed tables.",
+      tradeoff:"If queried constantly and slow, I'd switch to a materialized view with a refresh schedule."},
+    {id:"r6", title:"append vs replace when loading; pre-creating tables",
+      scenario:"You must load the long tables into Postgres with the right column types, and make re-runs safe. How?",
+      did:"Created empty tables with an explicit schema, then loaded with to_sql(append), truncating first.",
+      why:"Keeps my TIMESTAMPTZ/TEXT/DOUBLE schema; replace would drop the tables and let pandas guess types.",
+      alternatives:"replace, or COPY.",
+      tradeoff:"Truncate-then-append makes re-running safe (no duplicates — I actually hit doubled counts once, which is how I caught it)."},
+    {id:"r7", title:"administrator gets SUPERUSER directly",
+      scenario:"You want an admin login plus a read role and a create role. How do you grant superuser correctly?",
+      did:"WITH LOGIN SUPERUSER on administrator.",
+      why:"The SUPERUSER attribute isn't inherited via membership; only object privileges like SELECT are.",
+      alternatives:"rely on membership of the admin role (which wouldn't actually confer superuser).",
+      tradeoff:"None really — this is the correct Postgres behaviour; the value is being able to explain it."},
+    {id:"r8", title:"Sharing via dump (and the roles caveat)",
+      scenario:"You need to hand over the whole database, including the roles. How?",
+      did:"pg_dump for the DB + pg_dumpall --roles-only for roles; verified by restoring on a fresh DB and checking row counts and views.",
+      why:"Roles live at the cluster level, not inside a single database.",
+      alternatives:"host on a managed cloud Postgres and share connection details.",
+      tradeoff:"Managed cloud won't let you create a true SUPERUSER, so role fidelity is best preserved in the dump; the dump is also durable and offline."}
+  ],
+
+  /* ---- Mode 5 pool: curveballs ---- */
+  curveballs: [
+    {id:"c1", q:"What would a negative generation value mean?", a:"Mostly it shouldn't occur; for pumped storage it can mean consumption (pumping water up); elsewhere treat it as a data error to investigate."},
+    {id:"c2", q:"What if 50% of the data were missing?", a:"Interpolation is no longer trustworthy; report the gap, model with same-hour/seasonal patterns, maybe bring in an external source, and state the uncertainty."},
+    {id:"c3", q:"How would you scale this to all four countries or run it daily in production?", a:"Parameterise the country, wrap the steps in functions, schedule the pull+load with an orchestrator (e.g. Airflow), add data-quality checks and logging, and load incrementally."},
+    {id:"c4", q:"What indexes would help these tables?", a:"An index on date_id and a composite on (date_id, generation) to speed the GROUP BY / PARTITION BY date_id."},
+    {id:"c5", q:"Why is energy data stored in UTC?", a:"No DST jumps, so timestamps are unambiguous and comparable across countries; convert to local only for analysis."},
+    {id:"c6", q:"Is biomass carbon-neutral?", a:"It's classified renewable because it regrows, but neutrality is debated — it emits CO2 when burned and depends on regrowth time and sourcing."},
+    {id:"c7", q:"Why pivot to wide then melt back to long?", a:"Cleaning, totals and the daily resample are far easier with one column per fuel; the required output is long, so I reshape back at the end."},
+    {id:"c8", q:"WHERE vs HAVING?", a:"WHERE filters rows before grouping; HAVING filters after aggregation."},
+    {id:"c9", q:"Why TIMESTAMPTZ not TIMESTAMP?", a:"It stores the exact instant with the +02:00/+01:00 offset the data carries; plain TIMESTAMP drops the zone."},
+    {id:"c10", q:"What was the hardest part of this assessment?", a:"Getting local Postgres running: a containerised Postgres held port 5432, so I diagnosed which process owned the port and moved my server to another port, updating every connection string. Lesson: the port is part of a connection's identity."},
+    {id:"c11", q:"Did you use AI on this?", a:"Used it as a tutor and to speed up syntax/debugging, but the decisions and reasoning are mine — which I can demonstrate by explaining any line. Owning the judgement is what matters."}
+  ],
+
+  /* ---- Mode 6: CV & project drill ---- */
+  cvDrill: [
+    // Skontro project
+    {id:"cv1", group:"Skontro project", q:"Tell me about Skontro.",
+      shortAnswer:"An open-source, German-compliant multi-tenant mini-ERP for small businesses — invoicing and accounting — built with Laravel 11, Vue 3 + TypeScript, PostgreSQL and Docker.",
+      detail:"117 documented requirements, architecture decision records, an EN 16931-compliant invoicing engine with line-level VAT, an audited invoice state machine, secure multi-tenancy with strict data isolation, RBAC, and atomic sequential document numbering safe under concurrency; built with strict static analysis, automated tests, CI, and a one-change-per-PR workflow.",
+      connects:"It's my proof that I build production-grade, well-tested systems on PostgreSQL — the same care I brought to the assessment's database design and verification."},
+    {id:"cv2", group:"Skontro project", q:"Why do you handle money as integer cents instead of floats/decimals?",
+      shortAnswer:"To eliminate floating-point rounding errors, which are unacceptable in financial and tax calculations.",
+      detail:"Floats can't represent many decimal fractions exactly (e.g. 0.1), so sums drift; storing amounts as integer cents keeps arithmetic exact, and German e-invoicing (ZUGFeRD / EN 16931) demands that precision.",
+      connects:"Same instinct as choosing the right numeric type in the assessment — I used DOUBLE PRECISION for physical generation values where tiny rounding is irrelevant, but for money I'd never use a float. It shows I match the data type to the data's requirements."},
+    {id:"cv3", group:"Skontro project", q:"What is multi-tenancy and how did you isolate tenant data?",
+      shortAnswer:"One application instance serving many separate customers (tenants), where each tenant's data must be invisible to the others.",
+      detail:"I enforced strict data isolation so queries are always scoped to the current tenant, plus cookie-based authentication and role-based access control.",
+      connects:"It's the same principle as the PostgreSQL roles/users I built in the assessment — least privilege and controlling who can see or do what."},
+    {id:"cv4", group:"Skontro project", q:"What's an invoice state machine and why audit it?",
+      shortAnswer:"A defined set of allowed states for an invoice (e.g. draft → issued → paid) with only legal transitions between them, and an audit trail recording each change.",
+      detail:"It prevents invalid states and gives a tamper-evident history, which compliance requires.",
+      connects:"The wind/solar comparison view also encodes states (1/0/-1) by clear rules — I like logic that's explicit and verifiable."},
+    {id:"cv5", group:"Skontro project", q:"What does 'atomic sequential document numbering safe under concurrency' mean?",
+      shortAnswer:"Invoice numbers must be gap-free and unique even if two requests try to create an invoice at the same instant.",
+      detail:"Without care, two concurrent transactions can grab the same number or skip one; I made the allocation atomic so each number is issued exactly once.",
+      connects:"It's the same concurrency-awareness as making my data load idempotent in the assessment (truncate-then-append so re-running can't create duplicates)."},
+    {id:"cv6", group:"Skontro project", q:"Why build full documentation, ADRs, and CI for a personal project?",
+      shortAnswer:"To demonstrate production-grade engineering discipline, not just working code.",
+      detail:"117 requirements, architecture decision records explaining the 'why', automated tests and CI to catch regressions, strict static analysis, one-change-per-PR for reviewable history.",
+      connects:"It's why I wrote a tested pipeline and a verifying README for the assessment — I document decisions so they can be defended and maintained."},
+    {id:"cv7", group:"Skontro project", q:"Why PostgreSQL for Skontro (and not MySQL/Mongo)?",
+      shortAnswer:"It's robust, standards-compliant, and strong on data integrity, transactions, and advanced SQL features I rely on.",
+      detail:"Features like strict typing, constraints, window functions and reliable transactional behaviour suit financial data.",
+      connects:"It's the same database the assessment used, so I was already comfortable with its roles, views and dump tooling."},
+    // ERP & data experience
+    {id:"cv8", group:"ERP & data experience", q:"You administered Tally, Zoho Books and SAP Business One — what did that involve?",
+      shortAnswer:"Running three parallel accounting/ERP systems for a 5–10 person finance team: user access, licensing, and daily backups with zero data loss over two years.",
+      detail:"I was also the go-to person for IT issues, built small automations that saved the team hours weekly, and did zero-downtime migrations/upgrades.",
+      connects:"Hands-on experience with real financial data, access control, and backups — directly relevant to managing a database carefully, which the assessment's roles/dump steps tested."},
+    {id:"cv9", group:"ERP & data experience", q:"How does your ERP/finance-data background help for an energy-data role?",
+      shortAnswer:"Both are about careful handling of structured, high-stakes data — accuracy, access control, backups, and not losing or corrupting anything.",
+      detail:"I'm used to data people actually depend on, where a mistake matters.",
+      connects:"The assessment was exactly that — clean the data correctly, verify it, control access, and make a restorable backup."},
+    {id:"cv10", group:"ERP & data experience", q:"Give an example of an automation you built.",
+      shortAnswer:"Small scripts/automations that removed a few hours of routine finance work each week.",
+      detail:"(Be honest and specific in the room about the actual task — e.g. a recurring export/reconciliation step.)",
+      connects:"The same instinct as automating the assessment's transformation pipeline so it's repeatable rather than manual."},
+    // ML / Data Science
+    {id:"cv11", group:"ML / Data Science", q:"Tell me about your ML internship.",
+      shortAnswer:"A one-month intensive at Elevvo across three domains — text/NLP, predictive analytics, and time-series forecasting — building models to ~85% accuracy through careful preprocessing and tuning, end-to-end from raw data to output.",
+      detail:"The biggest lesson was how much careful data preprocessing drives results.",
+      connects:"Time-series forecasting and preprocessing are directly relevant — the assessment was time-series energy data needing exactly that kind of cleaning."},
+    {id:"cv12", group:"ML / Data Science", q:"Why are you moving from software engineering into data science?",
+      shortAnswer:"I enjoy the data side most — turning messy real-world data into something reliable and useful — and I want to deepen that, which is why I started the MSc.",
+      detail:"My engineering background gives me the production discipline; the MSc adds the analytical depth.",
+      connects:"This Energy Data Engineer role sits exactly at that intersection of solid engineering and data work, which is why it appeals to me."},
+    {id:"cv13", group:"ML / Data Science", q:"What's the link between time-series forecasting and this energy data?",
+      shortAnswer:"Electricity generation is time-series data — hourly values with daily and seasonal patterns — the same shape I forecasted in my internship.",
+      detail:"Techniques like handling gaps, resampling, and respecting temporal order all apply.",
+      connects:"It's why I interpolated over time and aggregated by day rather than treating rows as independent."},
+    // Tech & tools
+    {id:"cv14", group:"Tech & tools", q:"Your core stack is Laravel/Vue/JavaScript — how strong is your Python?",
+      shortAnswer:"Python is one of my languages and the one I use for data work; I used pandas and SQLAlchemy comfortably in the assessment.",
+      detail:"I'm strongest in JS/PHP from my web career, but I'm fluent enough in Python for data pipelines and I'm deepening it through the MSc.",
+      connects:"Be honest — the role is Python+SQL heavy, and the assessment shows I can already do that work; I'd keep growing."},
+    {id:"cv15", group:"Tech & tools", q:"You use Docker — how?",
+      shortAnswer:"For containerising apps like Skontro so the environment is consistent.",
+      detail:"Honest note: my local Postgres conflict in the assessment was actually a Docker container holding the port — which I diagnosed and resolved.",
+      connects:"Shows practical troubleshooting, not just happy-path usage."},
+    {id:"cv16", group:"Tech & tools", q:"How comfortable are you with SQL?",
+      shortAnswer:"Comfortable — I use PostgreSQL in Skontro and built three views in the assessment using CASE, FILTER, window functions, date_trunc and NULLIF, plus roles/privileges.",
+      detail:"I understand the difference between views and materialized views, and role attributes vs object privileges.",
+      connects:"Directly the SQL the role needs."},
+    // Career & fit
+    {id:"cv17", group:"Career & fit", q:"Why do you want to work at Agora / on the energy transition?",
+      shortAnswer:"I want my engineering and data skills to support something meaningful, and the energy transition is one of the most important challenges; Agora is a serious, evidence-led place to contribute.",
+      detail:"(Add a genuine personal reason in the room — e.g. interest in climate, wanting impact-driven work in Berlin.)",
+      connects:"I bring production-grade data engineering and I'm motivated by the mission, not just the task."},
+    {id:"cv18", group:"Career & fit", q:"Why a Werkstudent/entry-level role when you have 2+ years' experience?",
+      shortAnswer:"I've recently moved to Berlin and started my MSc, and I want to combine study with real, relevant data work; a working-student role is the right fit while I build German-market experience.",
+      detail:"I'm over-prepared on engineering discipline, which means I can contribute quickly.",
+      connects:"I'll be a low-risk, productive hire who already ships tested work."},
+    {id:"cv19", group:"Career & fit", q:"What's your German level — will it be a problem?",
+      shortAnswer:"A1 and actively improving; my English is C1 (TOEFL 100) and I work fluently in English.",
+      detail:"I'm committed to improving German and I've already navigated German-compliance domains (EN 16931/ZUGFeRD in Skontro).",
+      connects:"Shows I can handle German technical/regulatory context even while my spoken German grows."},
+    {id:"cv20", group:"Career & fit", q:"Tell me about a time you led a team / handled pressure.",
+      shortAnswer:"I supervised a 20+ person team in the AskYas guest zone across the F1 Abu Dhabi Grand Prix weekend — shift planning, breaks, full coverage, and handling escalated guest issues directly.",
+      detail:"I also ran app-rollout hypercare for PMI across 15–20 stores a day, training staff.",
+      connects:"I can communicate, stay calm under pressure, and work with non-technical people — useful for a data role that supports a wider team."},
+    {id:"cv21", group:"Career & fit", q:"What's a weakness / something you'd improve?",
+      shortAnswer:"Honestly: my German, and broadening my Python/data depth beyond my web-engineering core — both of which I'm actively addressing (MSc + daily practice).",
+      detail:"I turn this into evidence of self-awareness and action, not a canned answer.",
+      connects:"Shows a growth mindset, which matters for a junior role."},
+    {id:"cv22", group:"Career & fit", q:"Where do you see yourself / what do you want to learn here?",
+      shortAnswer:"To grow into a strong data engineer who can own real pipelines, and to learn the energy domain deeply.",
+      detail:"I want mentorship on production data workflows at scale.",
+      connects:"The role is a direct step toward that."}
+  ],
+
+  /* ---- Mode 7: live challenge ---- */
+  liveChallenge: [
+    {id:"lc1", category:"SQL",
+      task:"Given the long table pow_gen_de_h(date_id, region, generation, value), write a query returning, per timestamp, total wind (onshore+offshore) vs solar.",
+      solution:"SELECT date_id,\n  SUM(value) FILTER (WHERE generation IN ('Wind onshore','Wind offshore')) AS wind,\n  SUM(value) FILTER (WHERE generation = 'Solar') AS solar\nFROM pow_gen_de_h\nGROUP BY date_id;",
+      explain:"FILTER does conditional aggregation; because the table is long, you sum matching rows per timestamp."},
+    {id:"lc2", category:"SQL",
+      task:"Write the hourly percentage-share of each source, excluding the Renewable/Non-renewable total rows.",
+      solution:"SELECT date_id, generation,\n  100.0 * value / NULLIF(SUM(value) OVER (PARTITION BY date_id), 0) AS pct\nFROM pow_gen_de_h\nWHERE generation NOT IN ('Renewable','Non-renewable');",
+      explain:"The window SUM gives the per-hour total without collapsing rows; NULLIF guards divide-by-zero; excluding the totals stops the denominator doubling."},
+    {id:"lc3", category:"SQL",
+      task:"Monthly totals per generation type from the daily table pow_gen_de_d.",
+      solution:"SELECT date_trunc('month', date_id)::date AS month, region, generation, SUM(value) AS value\nFROM pow_gen_de_d\nGROUP BY 1, region, generation;",
+      explain:"date_trunc rounds each date to the first of its month so GROUP BY yields monthly sums."},
+    {id:"lc4", category:"SQL",
+      task:"Create a read-only login user in PostgreSQL.",
+      solution:"CREATE ROLE user_read NOLOGIN;\nGRANT USAGE ON SCHEMA public TO user_read;\nGRANT SELECT ON ALL TABLES IN SCHEMA public TO user_read;\nCREATE ROLE user_2 WITH LOGIN PASSWORD 'user_2_pass' IN ROLE user_read;",
+      explain:"A user is a role with LOGIN; SELECT is granted to a NOLOGIN role and the login user inherits it through membership."},
+    {id:"lc5", category:"pandas",
+      task:"Given a long DataFrame df[date_id, region, generation, value] for Germany, pivot so each generation is a column, with date_id as the index.",
+      solution:"de = df[df.region == 'Germany'].copy()\nde['date_id'] = pd.to_datetime(de['date_id'])\nwide = de.pivot_table(index='date_id', columns='generation',\n                      values='value', aggfunc='first')",
+      explain:"pivot_table tolerates accidental duplicate (timestamp, fuel) pairs where plain pivot errors."},
+    {id:"lc6", category:"pandas",
+      task:"Convert a naive UTC hourly index to German local time, DST-aware.",
+      solution:"wide.index = wide.index.tz_localize('UTC').tz_convert('Europe/Berlin')",
+      explain:"localize stamps it as UTC; convert to Europe/Berlin applies +2 (CEST) then +1 (CET) across the 30 Oct 2022 switch automatically."},
+    {id:"lc7", category:"pandas",
+      task:"Flag values above Q3 + 5×IQR per column as NaN.",
+      solution:"def flag(col):\n    q1, q3 = col.quantile(0.25), col.quantile(0.75)\n    return col.mask(col > q3 + 5*(q3 - q1))\nwide = wide.apply(flag)",
+      explain:"A robust, distribution-free fence that catches absurd planted values without touching real peaks."},
+    {id:"lc8", category:"pandas",
+      task:"Resample an hourly wide table to daily totals.",
+      solution:"daily = wide.resample('D').sum()",
+      explain:"Time-aware bucketing on a datetime index; sum gives total daily energy."}
+  ]
+};
+
+/* roles/users prose for Mode 1 */
+const ROLES_TEXT = "Three roles: admin (SUPERUSER); user_create (NOLOGIN, granted USAGE + CREATE on schema public + SELECT); user_read (NOLOGIN, read-only SELECT). Three login users: administrator (LOGIN SUPERUSER, password administrator_pass, also granted admin); user_1 (LOGIN, password user_1_pass, IN ROLE user_create); user_2 (LOGIN, password user_2_pass, IN ROLE user_read).";
+const ROLES_KEYPTS = [
+  "A 'user' is just a role with LOGIN.",
+  "Object privileges (SELECT) inherit through membership, but the SUPERUSER attribute does NOT — so administrator is given SUPERUSER directly.",
+  "On Postgres 15+, CREATE on schema public isn't granted by default, hence the explicit grant.",
+  "ALTER DEFAULT PRIVILEGES makes grants apply to future tables too."
+];
+const TABLES_TEXT = "Two long-format tables loaded from the cleaned CSVs: pow_gen_de_h (hourly, 39,744 rows) and the daily table (pow_gen_de_d, 1,674 rows), each with columns date_id, region, generation, value. Tables were pre-created with an explicit TIMESTAMPTZ / TEXT / DOUBLE schema, then loaded with to_sql(if_exists='append') after truncating, so the schema is preserved and re-runs stay duplicate-free.";
+const SHARING_TEXT = "pg_dump exports one database (tables, data, views) but NOT roles; pg_dumpall --roles-only exports the cluster-level roles separately. Verified the dump by restoring into a fresh database and checking row counts and views.";
+const API_TEXT = "The Agora API key only works as an HTTP header. Sent as a query parameter it returned {\"status\": False, \"data\": \"Key not found\"} — the request reached the server (HTTP 200) but failed at the APPLICATION level because the key wasn't where the API expected it. Moving it to a header returned the data. The response data was a list of [timestamp, region, generation, value] rows with no header row, so the column names were supplied manually.";
+
+/* ============================ STORAGE (try/catch) ============================ */
+const KEY = "agora_prep_v1";
+const Store = (function(){
+  let memCache = null;          // fallback if localStorage is unavailable
+  let usable = true;
+  function read(){
+    if(memCache) return memCache;
+    try{
+      const raw = localStorage.getItem(KEY);
+      memCache = raw ? JSON.parse(raw) : {};
+    }catch(e){
+      usable = false;
+      memCache = memCache || {};
+    }
+    return memCache;
+  }
+  function write(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify(memCache));
+    }catch(e){
+      usable = false; // keep working from memCache for this session
+    }
+  }
+  return {
+    get(k, dflt){ const s = read(); return (k in s) ? s[k] : dflt; },
+    set(k, v){ const s = read(); s[k] = v; write(); },
+    isUsable(){ return usable; },
+    _reset(){ memCache = {}; try{ localStorage.removeItem(KEY); }catch(e){} }
+  };
+})();
+
+/* ============================ HELPERS ============================ */
+function el(tag, props, children){
+  const n = document.createElement(tag);
+  if(props){
+    for(const k in props){
+      if(k === "class") n.className = props[k];
+      else if(k === "text") n.textContent = props[k];
+      else if(k === "html") n.innerHTML = props[k];
+      else if(k.slice(0,2) === "on" && typeof props[k] === "function") n.addEventListener(k.slice(2), props[k]);
+      else if(props[k] !== null && props[k] !== undefined) n.setAttribute(k, props[k]);
+    }
+  }
+  if(children != null){
+    (Array.isArray(children) ? children : [children]).forEach(function(c){
+      if(c == null) return;
+      n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+  }
+  return n;
+}
+function shuffle(arr){
+  const a = arr.slice();
+  // Fisher–Yates (deterministic-free; fine for study order)
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function categoriesOf(list){
+  const seen = [];
+  list.forEach(function(x){ if(seen.indexOf(x.category) < 0) seen.push(x.category); });
+  return seen;
+}
+function groupsOf(list){
+  const seen = [];
+  list.forEach(function(x){ if(seen.indexOf(x.group) < 0) seen.push(x.group); });
+  return seen;
+}
+/* tiny manual "syntax-ish" highlighter for code blocks (no library).
+   Safe: text is HTML-escaped first; only our own <span> tags are inserted. */
+function highlightCode(text){
+  // Single left-to-right tokenizer: strings are matched as whole tokens FIRST,
+  // so keywords inside string literals are never recoloured. No sentinels needed.
+  const STR = "'[^']*'";
+  const KW  = "\\b(?:SELECT|FROM|WHERE|GROUP BY|ORDER BY|PARTITION BY|OVER|FILTER|CASE|WHEN|THEN|ELSE|END|CREATE|ROLE|GRANT|USAGE|SCHEMA|WITH|LOGIN|NOLOGIN|SUPERUSER|PASSWORD|NOT|IN|ON|TO|ALL|TABLES|AS|SUM|COALESCE|NULLIF|def|return|import)\\b";
+  const FN  = "\\b(?:date_trunc|resample|pivot_table|tz_localize|tz_convert|to_datetime|quantile|mask|apply)\\b";
+  const fnRe = new RegExp("^" + FN + "$");
+  const combined = new RegExp(STR + "|" + KW + "|" + FN, "g");
+  let out = "", last = 0, m;
+  while((m = combined.exec(text)) !== null){
+    out += escapeHtml(text.slice(last, m.index));
+    const tok = m[0];
+    let cls = "kw";
+    if(tok.charAt(0) === "'") cls = "str";
+    else if(fnRe.test(tok)) cls = "fn";
+    out += '<span class="' + cls + '">' + escapeHtml(tok) + '</span>';
+    last = m.index + tok.length;
+  }
+  out += escapeHtml(text.slice(last));
+  return out;
+}
+function codeBlock(text){
+  const pre = el("pre", {class:"code"});
+  pre.innerHTML = highlightCode(text); // input escaped inside highlightCode
+  return pre;
+}
+
+/* ============================ MODE RENDERERS ============================ */
+
+/* ---- MODE 1: Dataset & Pipeline ---- */
+function renderPipeline(root){
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Dataset & Pipeline"}));
+  frag.appendChild(el("p", {class:"mode-lede", text:"Understand the data deeply and exactly what you did to it. Expand each card; focus on the WHY and the ALTERNATIVE — that's what they'll probe."}));
+
+  // What the data is
+  const p1 = el("div", {class:"panel"});
+  p1.appendChild(el("h3", {text:"What the data is"}));
+  p1.appendChild(el("p", {html:"Hourly electricity generation by fuel type, <b>Germany, Q4 2022</b> (1 Oct – 31 Dec), pulled from the Agora REST API. After cleaning and reshaping there are <b>39,744 hourly rows</b> and <b>1,674 daily rows</b> in the final long-format tables."}));
+  // data-flow visual
+  const flow = el("div", {class:"flow"});
+  const nodes = [["API","Agora REST"],["Clean","outliers · fill · tz"],["CSV","long format"],["Postgres","2 tables"],["Views","3 SQL views"]];
+  nodes.forEach(function(nd, i){
+    flow.appendChild(el("div", {class:"node"}, [nd[0], el("small", {text:nd[1]})]));
+    if(i < nodes.length - 1) flow.appendChild(el("span", {class:"arrow", text:"→"}));
+  });
+  p1.appendChild(flow);
+  frag.appendChild(p1);
+
+  // 16 fuel types
+  const p2 = el("div", {class:"panel"});
+  p2.appendChild(el("h3", {text:"The 16 fuel types"}));
+  const chips = el("div", {class:"chips"});
+  FUEL_TYPES.forEach(function(f){ chips.appendChild(el("span", {class:"chip", text:f})); });
+  p2.appendChild(chips);
+  frag.appendChild(p2);
+
+  // renewable split
+  const p3 = el("div", {class:"panel"});
+  p3.appendChild(el("h3", {text:"Renewable vs non-renewable (as submitted)"}));
+  const split = el("div", {class:"split2"});
+  const left = el("div");
+  left.appendChild(el("div", {class:"pill green", text:"Renewable"}));
+  const lc = el("div", {class:"collist"});
+  RENEWABLE.forEach(function(r){ lc.appendChild(el("div", {class:"item"}, [el("span",{class:"mk",text:"✓"}), el("span",{text:r})])); });
+  left.appendChild(lc);
+  const right = el("div");
+  right.appendChild(el("div", {class:"pill amber", text:"Non-renewable"}));
+  const rc = el("div", {class:"collist red"});
+  NON_RENEWABLE.forEach(function(r){ rc.appendChild(el("div", {class:"item"}, [el("span",{class:"mk",text:"•"}), el("span",{text:r})])); });
+  right.appendChild(rc);
+  split.appendChild(left); split.appendChild(right);
+  p3.appendChild(split);
+  p3.appendChild(el("p", {class:"faint", html:"Note: pumped storage is kept under renewable (hydro-based, positive generation) but is really storage — excluding it is equally defensible. Nuclear is non-renewable (uranium is finite) though low-carbon."}));
+  frag.appendChild(p3);
+
+  // 8 steps
+  frag.appendChild(el("h3", {class:"mode-title", text:"The 8 transformation steps"}));
+  CONTENT.pipelineSteps.forEach(function(s){
+    const d = el("details", {class:"step"});
+    const sum = el("summary", null, [
+      el("span", {class:"num", text:String(s.n)}),
+      el("span", {text:s.title}),
+      el("span", {class:"chev", text:"›"})
+    ]);
+    d.appendChild(sum);
+    const body = el("div", {class:"body"});
+    body.appendChild(el("div", {class:"kvblock"}, [el("div",{class:"k",text:"What it does"}), el("div",{class:"v",text:s.what})]));
+    body.appendChild(el("div", {class:"kvblock why"}, [el("div",{class:"k",text:"Why"}), el("div",{class:"v",text:s.why})]));
+    body.appendChild(el("div", {class:"kvblock alt"}, [el("div",{class:"k",text:"What else / alternative"}), el("div",{class:"v",text:s.alt})]));
+    d.appendChild(body);
+    frag.appendChild(d);
+  });
+
+  // Task 2
+  frag.appendChild(el("h3", {class:"mode-title", text:"Task 2 — the database work"}));
+  const t = el("div", {class:"panel"});
+  t.appendChild(el("h3", {text:"Tables"}));
+  t.appendChild(el("p", {text:TABLES_TEXT}));
+  frag.appendChild(t);
+
+  const v = el("div", {class:"panel"});
+  v.appendChild(el("h3", {text:"The 3 views"}));
+  CONTENT.views.forEach(function(vw){
+    const d = el("details", {class:"step"});
+    d.appendChild(el("summary", null, [el("span",{class:"num",text:"⌗"}), el("span",{class:"code",text:vw.name}), el("span",{class:"chev",text:"›"})]));
+    const body = el("div", {class:"body"});
+    body.appendChild(el("div", {class:"v", text:vw.desc}));
+    d.appendChild(body);
+    v.appendChild(d);
+  });
+  frag.appendChild(v);
+
+  const r = el("div", {class:"panel"});
+  r.appendChild(el("h3", {text:"Roles & users"}));
+  r.appendChild(el("p", {text:ROLES_TEXT}));
+  const kp = el("div", {class:"collist"});
+  ROLES_KEYPTS.forEach(function(x){ kp.appendChild(el("div", {class:"item"}, [el("span",{class:"mk",text:"→"}), el("span",{text:x})])); });
+  r.appendChild(kp);
+  frag.appendChild(r);
+
+  const api = el("div", {class:"panel"});
+  api.appendChild(el("h3", {text:"The API gotcha"}));
+  api.appendChild(el("p", {text:API_TEXT}));
+  frag.appendChild(api);
+
+  const sh = el("div", {class:"panel"});
+  sh.appendChild(el("h3", {text:"Sharing the database"}));
+  sh.appendChild(el("p", {text:SHARING_TEXT}));
+  frag.appendChild(sh);
+
+  root.replaceChildren(frag);
+}
+
+/* ---- MODE 2: Flashcards ---- */
+const FCState = { cat:"All", order:[], pos:0, flipped:false };
+function fcFiltered(){
+  return FCState.cat === "All" ? CONTENT.flashcards : CONTENT.flashcards.filter(function(c){ return c.category === FCState.cat; });
+}
+function fcKnownMap(){ return Store.get("flashKnown", {}); }
+function fcSetKnown(id, val){
+  const m = fcKnownMap(); if(val) m[id] = true; else delete m[id]; Store.set("flashKnown", m);
+}
+function renderFlashcards(root){
+  if(FCState.order.length === 0 || FCState.pos >= fcFiltered().length){
+    FCState.order = fcFiltered().map(function(_, i){ return i; });
+    FCState.pos = 0;
+  }
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Flashcards"}));
+  frag.appendChild(el("p", {class:"mode-lede", text:"Read the front, think of your answer out loud, THEN flip. This trains recall, not reading."}));
+
+  // toolbar
+  const tb = el("div", {class:"fc-toolbar"});
+  const cats = ["All"].concat(categoriesOf(CONTENT.flashcards));
+  const sel = el("select", {"aria-label":"Deck category"});
+  cats.forEach(function(c){ const o = el("option", {value:c, text:c}); if(c === FCState.cat) o.selected = true; sel.appendChild(o); });
+  sel.addEventListener("change", function(){ FCState.cat = sel.value; FCState.order = []; FCState.pos = 0; FCState.flipped = false; renderFlashcards(root); });
+  tb.appendChild(el("label", {class:"field"}, [el("span",{text:"Deck"}), sel]));
+  tb.appendChild(el("button", {class:"btn sm", text:"Shuffle", onclick:function(){ FCState.order = shuffle(FCState.order); FCState.pos = 0; FCState.flipped = false; renderFlashcards(root); }}));
+  tb.appendChild(el("button", {class:"btn sm ghost", text:"Reset deck", onclick:function(){
+    const m = fcKnownMap();
+    fcFiltered().forEach(function(c){ delete m[c.id]; });
+    Store.set("flashKnown", m);
+    renderFlashcards(root);
+  }}));
+  frag.appendChild(tb);
+
+  const filtered = fcFiltered();
+  const known = fcKnownMap();
+  const knownCount = filtered.filter(function(c){ return known[c.id]; }).length;
+  frag.appendChild(el("div", {class:"fc-counter", text:(FCState.pos + 1) + " / " + filtered.length + "  ·  " + knownCount + " known"}));
+
+  const card = filtered[FCState.order[FCState.pos]];
+  const isKnown = !!known[card.id];
+
+  const wrap = el("div", {class:"flip-wrap"});
+  const flip = el("div", {class:"flip" + (FCState.flipped ? " flipped" : ""), tabindex:"0", role:"button", "aria-label":"Flashcard, press Enter to flip"});
+  const front = el("div", {class:"face front"}, [
+    el("div", {class:"cat", text:card.category}),
+    el("div", {class:"q", text:card.front}),
+    el("div", {class:"hint", text:"Think of your answer, then flip."}),
+    el("div", {class:"flipnote", text:"Click / tap / Enter to flip"})
+  ]);
+  const back = el("div", {class:"face back"}, [
+    el("div", {class:"cat", text:"Answer"}),
+    el("div", {class:"a", text:card.back}),
+    el("div", {class:"flipnote", text:"Click / tap / Enter to flip back"})
+  ]);
+  flip.appendChild(front); flip.appendChild(back);
+  function doFlip(){ FCState.flipped = !FCState.flipped; flip.classList.toggle("flipped"); }
+  flip.addEventListener("click", doFlip);
+  flip.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); doFlip(); } });
+  wrap.appendChild(flip);
+  frag.appendChild(wrap);
+
+  // known badge
+  frag.appendChild(el("div", {class:"row", style:"justify-content:center;margin-bottom:10px"}, [
+    el("span", {class:"known-badge " + (isKnown ? "yes" : "no"), text:isKnown ? "Marked known" : "Not yet known"})
+  ]));
+
+  // actions
+  const act = el("div", {class:"fc-actions"});
+  act.appendChild(el("button", {class:"btn ghost sm", text:"‹ Prev", onclick:function(){ move(-1); }}));
+  act.appendChild(el("button", {class:"btn primary", text:"I knew it ✓", onclick:function(){ fcSetKnown(card.id, true); move(1); }}));
+  act.appendChild(el("button", {class:"btn amber", text:"Review again", onclick:function(){ fcSetKnown(card.id, false); move(1); }}));
+  act.appendChild(el("button", {class:"btn ghost sm", text:"Next ›", onclick:function(){ move(1); }}));
+  frag.appendChild(act);
+
+  function move(d){
+    const n = filtered.length;
+    FCState.pos = (FCState.pos + d + n) % n;
+    FCState.flipped = false;
+    renderFlashcards(root);
+  }
+
+  root.replaceChildren(frag);
+}
+
+/* ---- MODE 3: Quiz ---- */
+const QZ = { active:false, cat:"Mixed", len:"10", items:[], idx:0, score:0, answered:false, wrong:[] };
+function quizCategories(){ return ["Mixed"].concat(categoriesOf(CONTENT.quiz)); }
+function quizBest(){ return Store.get("quizBest", {}); }
+function renderQuiz(root){
+  if(QZ.active){ renderQuizQuestion(root); return; }
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Quiz"}));
+  frag.appendChild(el("p", {class:"mode-lede", text:"Scored multiple-choice. Order and options are randomised each run. Read the explanation on every answer — that's where the learning is."}));
+
+  const setup = el("div", {class:"panel"});
+  const catSel = el("select", {"aria-label":"Category"});
+  quizCategories().forEach(function(c){ const o = el("option",{value:c,text:c}); if(c===QZ.cat)o.selected=true; catSel.appendChild(o); });
+  catSel.addEventListener("change", function(){ QZ.cat = catSel.value; });
+  const lenSel = el("select", {"aria-label":"Length"});
+  [["10","10 questions"],["20","20 questions"],["All","All questions"]].forEach(function(p){ const o=el("option",{value:p[0],text:p[1]}); if(p[0]===QZ.len)o.selected=true; lenSel.appendChild(o); });
+  lenSel.addEventListener("change", function(){ QZ.len = lenSel.value; });
+  setup.appendChild(el("div", {class:"row"}, [
+    el("label", {class:"field"}, [el("span",{text:"Category"}), catSel]),
+    el("label", {class:"field"}, [el("span",{text:"Length"}), lenSel]),
+    el("button", {class:"btn primary", text:"Start quiz", style:"align-self:flex-end", onclick:function(){ startQuiz(root); }})
+  ]));
+  frag.appendChild(setup);
+
+  // best scores
+  const best = quizBest();
+  const keys = Object.keys(best);
+  const bp = el("div", {class:"panel"});
+  bp.appendChild(el("h3", {text:"Best scores"}));
+  if(keys.length === 0){
+    bp.appendChild(el("p", {class:"faint", text:"No scores yet — take a quiz to record your best."}));
+  } else {
+    const grid = el("div", {class:"bestgrid"});
+    keys.forEach(function(k){
+      const b = best[k];
+      grid.appendChild(el("div", {class:"bestcard"}, [
+        el("div", {class:"c", text:k}),
+        el("div", {class:"s", html:b.right + "<small>/" + b.total + " · " + b.pct + "%</small>"})
+      ]));
+    });
+    bp.appendChild(grid);
+  }
+  frag.appendChild(bp);
+  root.replaceChildren(frag);
+}
+function startQuiz(root){
+  let pool = QZ.cat === "Mixed" ? CONTENT.quiz.slice() : CONTENT.quiz.filter(function(q){ return q.category === QZ.cat; });
+  pool = shuffle(pool);
+  if(QZ.len !== "All") pool = pool.slice(0, Math.min(parseInt(QZ.len,10), pool.length));
+  QZ.items = pool.map(function(q){
+    const opts = q.options.map(function(text, i){ return {text:text, correct:i === q.answer}; });
+    return {q:q, opts:shuffle(opts)};
+  });
+  QZ.active = true; QZ.idx = 0; QZ.score = 0; QZ.answered = false; QZ.wrong = [];
+  renderQuizQuestion(root);
+}
+function renderQuizQuestion(root){
+  if(QZ.idx >= QZ.items.length){ renderQuizSummary(root); return; }
+  const cur = QZ.items[QZ.idx];
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("div", {class:"spread"}, [
+    el("h2", {class:"mode-title", text:"Quiz"}),
+    el("span", {class:"scorebar", html:"Score <span style='color:var(--green)'>" + QZ.score + "</span> / " + QZ.items.length})
+  ]));
+  const bar = el("div", {class:"qprogress"}); bar.appendChild(el("i", {style:"width:" + Math.round(QZ.idx / QZ.items.length * 100) + "%"}));
+  frag.appendChild(bar);
+  frag.appendChild(el("div", {class:"counter-lg", text:"Question " + (QZ.idx + 1) + " of " + QZ.items.length + "  ·  " + cur.q.category}));
+
+  const card = el("div", {class:"bigcard", style:"margin-top:10px"});
+  card.appendChild(el("div", {class:"scenario", text:cur.q.q}));
+  const optWrap = el("div");
+  const letters = ["A","B","C","D","E","F"];
+  cur.opts.forEach(function(o, i){
+    const b = el("button", {class:"opt", type:"button"}, [el("span",{class:"lt",text:letters[i]}), document.createTextNode(o.text)]);
+    b.addEventListener("click", function(){
+      if(QZ.answered) return;
+      QZ.answered = true;
+      const correctOpt = cur.opts.filter(function(x){ return x.correct; })[0];
+      Array.prototype.forEach.call(optWrap.children, function(btn, j){
+        btn.disabled = true;
+        if(cur.opts[j].correct) btn.classList.add("correct");
+      });
+      if(o.correct){ QZ.score++; }
+      else {
+        b.classList.add("wrong");
+        QZ.wrong.push({q:cur.q.q, correct:correctOpt.text, explain:cur.q.explain});
+      }
+      const good = o.correct;
+      const ex = el("div", {class:"explain" + (good ? "" : " bad")});
+      ex.appendChild(el("span", {class:"lbl", text:good ? "Correct" : "Not quite"}));
+      ex.appendChild(el("div", {html:(good ? "" : "<b>Answer:</b> " + escapeHtml(correctOpt.text) + " — ") + escapeHtml(cur.q.explain)}));
+      card.appendChild(ex);
+      card.appendChild(el("div", {class:"navrow"}, [
+        el("span", {class:"counter-lg", text:""}),
+        el("button", {class:"btn primary", text:(QZ.idx + 1 < QZ.items.length ? "Next ›" : "See results"), onclick:function(){ QZ.idx++; QZ.answered = false; renderQuizQuestion(root); }})
+      ]));
+    });
+    optWrap.appendChild(b);
+  });
+  card.appendChild(optWrap);
+  frag.appendChild(card);
+  root.replaceChildren(frag);
+}
+function renderQuizSummary(root){
+  const total = QZ.items.length;
+  const pct = total ? Math.round(QZ.score / total * 100) : 0;
+  // persist best
+  const best = quizBest();
+  const k = QZ.cat;
+  if(!best[k] || pct > best[k].pct){ best[k] = {right:QZ.score, total:total, pct:pct}; Store.set("quizBest", best); }
+  if(!best.Overall || pct > best.Overall.pct){ best.Overall = {right:QZ.score, total:total, pct:pct}; Store.set("quizBest", best); }
+
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Quiz complete"}));
+  const card = el("div", {class:"panel"});
+  card.appendChild(el("div", {style:"font-size:34px;font-weight:800", html:QZ.score + " <span class='faint' style='font-size:20px'>/ " + total + "</span>"}));
+  card.appendChild(el("div", {class:"muted", text:pct + "% · category: " + QZ.cat}));
+  frag.appendChild(card);
+
+  if(QZ.wrong.length){
+    const w = el("div", {class:"panel"});
+    w.appendChild(el("h3", {text:"Review what you missed (" + QZ.wrong.length + ")"}));
+    QZ.wrong.forEach(function(it){
+      const wi = el("div", {class:"wrong-item"});
+      wi.appendChild(el("div", {class:"q", text:it.q}));
+      wi.appendChild(el("div", {class:"muted", html:"<b style='color:var(--green)'>Correct:</b> " + escapeHtml(it.correct)}));
+      wi.appendChild(el("div", {class:"faint", text:it.explain}));
+      w.appendChild(wi);
+    });
+    frag.appendChild(w);
+  } else {
+    frag.appendChild(el("div", {class:"panel"}, el("p", {html:"Perfect run — nothing missed. 🌱"})));
+  }
+
+  frag.appendChild(el("div", {class:"row"}, [
+    el("button", {class:"btn primary", text:"New quiz", onclick:function(){ QZ.active = false; renderQuiz(root); }}),
+    el("button", {class:"btn ghost", text:"Retry same settings", onclick:function(){ startQuiz(root); }})
+  ]));
+  root.replaceChildren(frag);
+}
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ---- MODE 4: Reasoning Drill ---- */
+const RD = { idx:0, revealed:false };
+function renderReasoning(root){ renderRevealMode(root, {
+  title:"Reasoning Drill",
+  lede:"The most important mode. Read the scenario, SAY your answer out loud, then reveal the structured model answer. Practise producing the why and the what-else.",
+  data:CONTENT.reasoning, state:RD,
+  jumpLabel:function(item, i){ return String(i + 1); },
+  renderCard:function(item){
+    const f = document.createDocumentFragment();
+    f.appendChild(el("div", {class:"pill green", text:item.title}));
+    f.appendChild(el("div", {class:"scenario", style:"margin-top:10px", text:item.scenario}));
+    f.appendChild(el("div", {class:"prompt", text:"How would you justify this? What else could you have done?"}));
+    f.appendChild(el("div", {class:"sayloud"}, [el("span",{text:"🗣"}), el("span",{text:"Say it out loud first — then reveal."})]));
+    return f;
+  },
+  renderReveal:function(item){
+    const f = document.createDocumentFragment();
+    f.appendChild(revealBlock("did","What I did", item.did));
+    f.appendChild(revealBlock("why","Why", item.why));
+    f.appendChild(revealBlock("alt","Alternatives", item.alternatives));
+    f.appendChild(revealBlock("trade","Trade-off / what I'd say if pushed", item.tradeoff));
+    return f;
+  }
+}); }
+function revealBlock(cls, label, text){
+  return el("div", {class:"block " + cls}, [el("div",{class:"blab",text:label}), el("div",{class:"bv",text:text})]);
+}
+
+/* ---- MODE 6: CV & Project Drill ---- */
+const CVD = { idx:0, revealed:false, group:"All" };
+function renderCvDrill(root){
+  const data = CVD.group === "All" ? CONTENT.cvDrill : CONTENT.cvDrill.filter(function(x){ return x.group === CVD.group; });
+  if(CVD.idx >= data.length) CVD.idx = 0;
+  renderRevealMode(root, {
+    title:"CV & Project Drill",
+    lede:"They'll connect the take-home to your background — especially Skontro, your ERP/data work, and your ML internship. Think first, say it out loud, then reveal.",
+    data:data, state:CVD,
+    toolbar:function(){
+      const sel = el("select", {"aria-label":"Sub-group"});
+      ["All"].concat(groupsOf(CONTENT.cvDrill)).forEach(function(g){ const o=el("option",{value:g,text:g}); if(g===CVD.group)o.selected=true; sel.appendChild(o); });
+      sel.addEventListener("change", function(){ CVD.group = sel.value; CVD.idx = 0; CVD.revealed = false; renderCvDrill(root); });
+      return el("label", {class:"field", style:"margin-bottom:14px"}, [el("span",{text:"Group"}), sel]);
+    },
+    jumpLabel:function(item, i){ return String(i + 1); },
+    renderCard:function(item){
+      const f = document.createDocumentFragment();
+      f.appendChild(el("div", {class:"pill green", text:item.group}));
+      f.appendChild(el("div", {class:"scenario", style:"margin-top:10px", text:item.q}));
+      f.appendChild(el("div", {class:"sayloud"}, [el("span",{text:"🗣"}), el("span",{text:"Think first — say your answer out loud, then reveal."})]));
+      return f;
+    },
+    renderReveal:function(item){
+      const f = document.createDocumentFragment();
+      f.appendChild(revealBlock("did","Short answer", item.shortAnswer));
+      f.appendChild(revealBlock("why","The detail", item.detail));
+      f.appendChild(revealBlock("alt","How it connects to this role", item.connects));
+      return f;
+    }
+  });
+}
+
+/* shared reveal-mode renderer for Modes 4 & 6 */
+function renderRevealMode(root, cfg){
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:cfg.title}));
+  frag.appendChild(el("p", {class:"mode-lede", text:cfg.lede}));
+  if(cfg.toolbar) frag.appendChild(cfg.toolbar());
+
+  const data = cfg.data, st = cfg.state;
+  if(st.idx >= data.length) st.idx = 0;
+
+  // jump bar
+  const jb = el("div", {class:"jumpbar"});
+  data.forEach(function(item, i){
+    jb.appendChild(el("button", {class:(i === st.idx ? "cur" : ""), text:cfg.jumpLabel(item, i), title:cfg.jumpLabel(item,i), onclick:function(){ st.idx = i; st.revealed = false; renderRevealMode(root, cfg); }}));
+  });
+  frag.appendChild(jb);
+
+  const item = data[st.idx];
+  const card = el("div", {class:"bigcard"});
+  card.appendChild(cfg.renderCard(item));
+  if(!st.revealed){
+    card.appendChild(el("button", {class:"btn primary", style:"margin-top:6px", text:"Reveal model answer", onclick:function(){ st.revealed = true; renderRevealMode(root, cfg); }}));
+  } else {
+    card.appendChild(cfg.renderReveal(item));
+  }
+  card.appendChild(el("div", {class:"navrow"}, [
+    el("button", {class:"btn ghost sm", text:"‹ Prev", onclick:function(){ st.idx = (st.idx - 1 + data.length) % data.length; st.revealed = false; renderRevealMode(root, cfg); }}),
+    el("span", {class:"counter-lg", text:(st.idx + 1) + " / " + data.length}),
+    el("button", {class:"btn ghost sm", text:"Next ›", onclick:function(){ st.idx = (st.idx + 1) % data.length; st.revealed = false; renderRevealMode(root, cfg); }})
+  ]));
+  frag.appendChild(card);
+  root.replaceChildren(frag);
+}
+
+/* ---- MODE 5: Mock Interview ---- */
+const MOCK = { flavour:"mixed", pool:[], idx:0, revealed:false, timerOn:false, timerLeft:60, timerId:null };
+function buildMockPool(flavour){
+  const assessment = [];
+  CONTENT.quiz.forEach(function(q){
+    const correct = q.options[q.answer];
+    assessment.push({q:q.q, a:"Correct answer: " + correct + ". " + q.explain, tag:"Assessment · " + q.category});
+  });
+  CONTENT.curveballs.forEach(function(c){ assessment.push({q:c.q, a:c.a, tag:"Curveball"}); });
+  CONTENT.reasoning.forEach(function(r){
+    assessment.push({q:"Walk me through: " + r.title + ". " + r.scenario, a:"What I did — " + r.did + "  Why — " + r.why + "  Alternatives — " + r.alternatives + "  Trade-off — " + r.tradeoff, tag:"Reasoning"});
+  });
+  const cv = CONTENT.cvDrill.map(function(c){
+    return {q:c.q, a:c.shortAnswer + "  " + c.detail + "  (Connects: " + c.connects + ")", tag:"CV · " + c.group};
+  });
+  let pool;
+  if(flavour === "assessment") pool = assessment;
+  else if(flavour === "cv") pool = cv;
+  else pool = assessment.concat(cv);
+  return shuffle(pool);
+}
+function mockStop(){ if(MOCK.timerId){ clearInterval(MOCK.timerId); MOCK.timerId = null; } }
+function renderMock(root){
+  if(MOCK.pool.length === 0) MOCK.pool = buildMockPool(MOCK.flavour);
+  mockStop();
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Mock Interview"}));
+  frag.appendChild(el("p", {class:"mode-lede", text:"Rapid-fire rehearsal. One question at a time, no multiple choice — answer out loud, then check the suggested answer. No scoring; this is pure practice."}));
+
+  // controls
+  const ctrl = el("div", {class:"panel"});
+  const flavSel = el("select", {"aria-label":"Session flavour"});
+  [["mixed","Everything mixed"],["assessment","Assessment only"],["cv","CV & behavioural only"]].forEach(function(p){ const o=el("option",{value:p[0],text:p[1]}); if(p[0]===MOCK.flavour)o.selected=true; flavSel.appendChild(o); });
+  flavSel.addEventListener("change", function(){ MOCK.flavour = flavSel.value; MOCK.pool = buildMockPool(MOCK.flavour); MOCK.idx = 0; MOCK.revealed = false; renderMock(root); });
+
+  const timerToggle = el("input", {type:"checkbox"});
+  timerToggle.checked = MOCK.timerOn;
+  timerToggle.addEventListener("change", function(){ MOCK.timerOn = timerToggle.checked; MOCK.timerLeft = 60; renderMock(root); });
+
+  ctrl.appendChild(el("div", {class:"spread"}, [
+    el("label", {class:"field"}, [el("span",{text:"Session"}), flavSel]),
+    el("label", {class:"toggle"}, [timerToggle, el("span",{text:"Per-question timer (60s)"})]),
+    el("button", {class:"btn sm", text:"Shuffle / new session", onclick:function(){ MOCK.pool = buildMockPool(MOCK.flavour); MOCK.idx = 0; MOCK.revealed = false; renderMock(root); }})
+  ]));
+  frag.appendChild(ctrl);
+
+  if(MOCK.idx >= MOCK.pool.length){
+    const done = el("div", {class:"bigcard"});
+    done.appendChild(el("div", {class:"scenario", text:"You reviewed " + MOCK.pool.length + " questions. 🌿"}));
+    done.appendChild(el("p", {class:"muted", text:"That's a full pass through this session. Shuffle for a fresh order, or switch flavour. You've got this — own your judgement and explain the why."}));
+    done.appendChild(el("button", {class:"btn primary", style:"margin-top:8px", text:"Start again", onclick:function(){ MOCK.pool = buildMockPool(MOCK.flavour); MOCK.idx = 0; MOCK.revealed = false; renderMock(root); }}));
+    frag.appendChild(done);
+    root.replaceChildren(frag);
+    return;
+  }
+
+  const item = MOCK.pool[MOCK.idx];
+  const card = el("div", {class:"bigcard"});
+  card.appendChild(el("div", {class:"spread"}, [
+    el("span", {class:"pill", text:item.tag}),
+    el("span", {class:"timer " + (MOCK.timerOn ? "" : "off"), id:"mock-timer", text:MOCK.timerOn ? fmtTime(MOCK.timerLeft) : "—:—"})
+  ]));
+  card.appendChild(el("div", {class:"scenario", style:"margin-top:12px", text:item.q}));
+  card.appendChild(el("div", {class:"sayloud"}, [el("span",{text:"🗣"}), el("span",{text:"Answer out loud as if they're in the room. Then check."})]));
+
+  if(!MOCK.revealed){
+    card.appendChild(el("button", {class:"btn primary", text:"Show suggested answer", onclick:function(){ MOCK.revealed = true; renderMock(root); }}));
+  } else {
+    card.appendChild(el("div", {class:"block did"}, [el("div",{class:"blab",text:"Suggested answer"}), el("div",{class:"bv",text:item.a})]));
+  }
+  card.appendChild(el("div", {class:"navrow"}, [
+    el("span", {class:"counter-lg", text:"Question " + (MOCK.idx + 1) + " of " + MOCK.pool.length}),
+    el("button", {class:"btn primary", text:(MOCK.idx + 1 < MOCK.pool.length ? "Next ›" : "Finish"), onclick:function(){ MOCK.idx++; MOCK.revealed = false; MOCK.timerLeft = 60; renderMock(root); }})
+  ]));
+  frag.appendChild(card);
+  root.replaceChildren(frag);
+
+  // start timer if on
+  if(MOCK.timerOn){
+    MOCK.timerLeft = MOCK.timerLeft || 60;
+    MOCK.timerId = setInterval(function(){
+      MOCK.timerLeft--;
+      const t = document.getElementById("mock-timer");
+      if(!t){ mockStop(); return; }
+      if(MOCK.timerLeft <= 0){ t.textContent = "0:00"; t.classList.add("off"); mockStop(); }
+      else { t.textContent = fmtTime(MOCK.timerLeft); }
+    }, 1000);
+  }
+}
+function fmtTime(s){ const m = Math.floor(s / 60); const ss = s % 60; return m + ":" + (ss < 10 ? "0" : "") + ss; }
+
+/* ---- MODE 7: Live Challenge ---- */
+const LC = { idx:0, revealed:false };
+function renderLive(root){
+  const data = CONTENT.liveChallenge;
+  if(LC.idx >= data.length) LC.idx = 0;
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Live Challenge"}));
+  frag.appendChild(el("p", {class:"mode-lede", text:"On-the-spot SQL / pandas. Attempt it in the scratchpad (or in your head), then reveal the model solution and compare."}));
+
+  const jb = el("div", {class:"jumpbar"});
+  data.forEach(function(item, i){
+    jb.appendChild(el("button", {class:(i === LC.idx ? "cur" : ""), text:String(i + 1), onclick:function(){ LC.idx = i; LC.revealed = false; renderLive(root); }}));
+  });
+  frag.appendChild(jb);
+
+  const item = data[LC.idx];
+  const card = el("div", {class:"bigcard"});
+  card.appendChild(el("span", {class:"pill " + (item.category === "SQL" ? "green" : "amber"), text:item.category}));
+  card.appendChild(el("div", {class:"scenario", style:"margin-top:10px", text:item.task}));
+
+  // scratchpad (persist per task)
+  const scratchKey = "scratch_" + item.id;
+  const ta = el("textarea", {class:"scratch", spellcheck:"false", placeholder:"Type your attempt here…", "aria-label":"Scratchpad, not executed"});
+  ta.value = Store.get(scratchKey, "");
+  ta.addEventListener("input", function(){ Store.set(scratchKey, ta.value); });
+  card.appendChild(ta);
+  card.appendChild(el("p", {class:"scratch-note", text:"Scratchpad — not executed; compare your attempt to the model answer."}));
+
+  if(!LC.revealed){
+    card.appendChild(el("button", {class:"btn primary", style:"margin-top:8px", text:"Show solution", onclick:function(){ LC.revealed = true; renderLive(root); }}));
+  } else {
+    card.appendChild(el("div", {class:"block did", style:"padding-top:6px"}, [el("div",{class:"blab",text:"Model solution"}), codeBlock(item.solution)]));
+    card.appendChild(el("div", {class:"block why"}, [el("div",{class:"blab",text:"Why"}), el("div",{class:"bv",text:item.explain})]));
+  }
+  card.appendChild(el("div", {class:"navrow"}, [
+    el("button", {class:"btn ghost sm", text:"‹ Prev", onclick:function(){ LC.idx = (LC.idx - 1 + data.length) % data.length; LC.revealed = false; renderLive(root); }}),
+    el("span", {class:"counter-lg", text:(LC.idx + 1) + " / " + data.length + "  ·  " + item.category}),
+    el("button", {class:"btn ghost sm", text:"Next ›", onclick:function(){ LC.idx = (LC.idx + 1) % data.length; LC.revealed = false; renderLive(root); }})
+  ]));
+  frag.appendChild(card);
+  root.replaceChildren(frag);
+}
+
+/* ============================ NAV / ROUTING ============================ */
+const MODES = [
+  {id:"pipeline",  label:"1 · Dataset & Pipeline", group:"The Assessment",    render:renderPipeline},
+  {id:"flashcards",label:"2 · Flashcards",         group:"The Assessment",    render:renderFlashcards},
+  {id:"quiz",      label:"3 · Quiz",               group:"The Assessment",    render:renderQuiz},
+  {id:"reasoning", label:"4 · Reasoning Drill",    group:"The Assessment",    render:renderReasoning},
+  {id:"mock",      label:"5 · Mock Interview",     group:"The Assessment",    render:renderMock},
+  {id:"cvdrill",   label:"6 · CV & Project Drill", group:"Me & The Interview",render:renderCvDrill},
+  {id:"live",      label:"7 · Live Challenge",     group:"Me & The Interview",render:renderLive}
+];
+let activeMode = null;
+function buildNav(){
+  const nav = document.getElementById("nav");
+  nav.replaceChildren();
+  const groups = [];
+  MODES.forEach(function(m){ if(groups.indexOf(m.group) < 0) groups.push(m.group); });
+  groups.forEach(function(g, gi){
+    if(gi > 0) nav.appendChild(el("div", {class:"nav-divider"}));
+    const wrap = el("div", {class:"nav-group"});
+    wrap.appendChild(el("div", {class:"glabel", text:g}));
+    const rowEl = el("div", {class:"nav-row"});
+    MODES.filter(function(m){ return m.group === g; }).forEach(function(m){
+      rowEl.appendChild(el("button", {class:"tab", "data-mode":m.id, text:m.label, onclick:function(){ switchMode(m.id); }}));
+    });
+    wrap.appendChild(rowEl);
+    nav.appendChild(wrap);
+  });
+}
+function switchMode(id){
+  mockStop(); // clean up any running timer
+  activeMode = id;
+  Store.set("activeMode", id);
+  const mode = MODES.filter(function(m){ return m.id === id; })[0] || MODES[0];
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(t){
+    t.classList.toggle("active", t.getAttribute("data-mode") === id);
+  });
+  const view = document.getElementById("view");
+  mode.render(view);
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ============================ SELF-TEST ============================ */
+function runSelfTest(){
+  const results = [];
+  function check(name, fn){
+    let ok = false, msg = "";
+    try{ const r = fn(); ok = (r === true || r === undefined); if(r && r.ok !== undefined){ ok = r.ok; msg = r.msg || ""; } }
+    catch(e){ ok = false; msg = e.message; }
+    results.push({name:name, ok:ok, msg:msg});
+  }
+
+  // 1. content counts
+  check("Pipeline steps = 8", function(){ return {ok:CONTENT.pipelineSteps.length === 8, msg:"got " + CONTENT.pipelineSteps.length}; });
+  check("Quiz questions = 18", function(){ return {ok:CONTENT.quiz.length === 18, msg:"got " + CONTENT.quiz.length}; });
+  check("Reasoning items = 8", function(){ return {ok:CONTENT.reasoning.length === 8, msg:"got " + CONTENT.reasoning.length}; });
+  check("Curveballs = 11", function(){ return {ok:CONTENT.curveballs.length === 11, msg:"got " + CONTENT.curveballs.length}; });
+  check("CV-drill items = 22", function(){ return {ok:CONTENT.cvDrill.length === 22, msg:"got " + CONTENT.cvDrill.length}; });
+  check("Live-challenge tasks = 8", function(){ return {ok:CONTENT.liveChallenge.length === 8, msg:"got " + CONTENT.liveChallenge.length}; });
+  check("Flashcards >= 40", function(){ return {ok:CONTENT.flashcards.length >= 40, msg:"got " + CONTENT.flashcards.length}; });
+  check("Flashcards include Career & fit (CV) cards", function(){ return CONTENT.flashcards.some(function(c){ return c.category === "Career & fit"; }); });
+  check("Every quiz answer index is valid & explained", function(){
+    return CONTENT.quiz.every(function(q){ return q.options[q.answer] !== undefined && typeof q.explain === "string" && q.explain.length > 0; });
+  });
+  check("Fuel types = 16", function(){ return {ok:FUEL_TYPES.length === 16, msg:"got " + FUEL_TYPES.length}; });
+  check("Views = 3", function(){ return CONTENT.views.length === 3; });
+
+  // 2. storage roundtrip + graceful failure
+  check("localStorage roundtrip", function(){
+    Store.set("__t", 123); const v = Store.get("__t"); return v === 123;
+  });
+  check("App survives blocked storage (simulated throw)", function(){
+    const orig = Storage.prototype.setItem;
+    try{
+      Storage.prototype.setItem = function(){ throw new Error("blocked"); };
+      // a set/get must not throw even when the backing store rejects writes
+      Store.set("__x", 1); Store.get("__x", "d");
+      return true;
+    } finally {
+      Storage.prototype.setItem = orig;
+    }
+  });
+
+  // 3. shuffle integrity
+  check("shuffle preserves length & elements", function(){
+    const src = [1,2,3,4,5,6,7,8,9,10];
+    const out = shuffle(src);
+    if(out.length !== src.length) return false;
+    return src.every(function(x){ return out.indexOf(x) >= 0; });
+  });
+
+  // 4. quiz scoring logic (simulate)
+  check("quiz scoring counts correct picks", function(){
+    const q = CONTENT.quiz[0];
+    const opts = q.options.map(function(t,i){ return {text:t, correct:i === q.answer}; });
+    const correct = opts.filter(function(o){ return o.correct; }).length;
+    return correct === 1;
+  });
+
+  // 5. mock pool builder
+  check("mock pool: everything = assessment + cv", function(){
+    const a = buildMockPool("assessment").length;
+    const c = buildMockPool("cv").length;
+    const all = buildMockPool("mixed").length;
+    return {ok:all === a + c, msg:"assess " + a + " + cv " + c + " = " + (a+c) + " vs all " + all};
+  });
+  check("mock cv flavour length = cvDrill count", function(){
+    return buildMockPool("cv").length === CONTENT.cvDrill.length;
+  });
+
+  // 6. every mode renders without throwing
+  MODES.forEach(function(m){
+    check("Mode renders: " + m.id, function(){
+      const tmp = document.createElement("div");
+      m.render(tmp);
+      mockStop();
+      return {ok:tmp.childElementCount > 0, msg:tmp.childElementCount + " children"};
+    });
+  });
+
+  // 7. no external network references in the document
+  check("No external http(s) references in document", function(){
+    // Scan the rendered document for any external protocol literal. The scan pattern
+    // is assembled from fragments so the regex source itself never spells out a literal
+    // "http" + "://" that the scan could match (which would be a false positive).
+    const scan = new RegExp("http" + "s?" + ":" + "\\/" + "\\/", "gi");
+    const matches = document.documentElement.outerHTML.match(scan) || [];
+    return {ok:matches.length === 0, msg:matches.length + " external protocol occurrences"};
+  });
+
+  // restore: switch back to active mode after render tests
+  switchMode(activeMode || "pipeline");
+  return results;
+}
+function showSelfTest(){
+  const panel = document.getElementById("selftest-panel");
+  const results = runSelfTest();
+  const passed = results.filter(function(r){ return r.ok; }).length;
+  panel.replaceChildren();
+  const card = el("div", {class:"panel"});
+  card.appendChild(el("div", {class:"st-summary", html:"Self-test: <span class='" + (passed === results.length ? "st-pass" : "st-fail") + "'>" + passed + " / " + results.length + " passed</span>"}));
+  results.forEach(function(r){
+    card.appendChild(el("div", {class:"st-line"}, [
+      el("span", {class:r.ok ? "st-pass" : "st-fail", text:r.ok ? "PASS" : "FAIL"}),
+      el("span", {text:r.name + (r.msg ? "  (" + r.msg + ")" : "")})
+    ]));
+  });
+  card.appendChild(el("button", {class:"btn sm ghost", style:"margin-top:10px", text:"Close", onclick:function(){ panel.replaceChildren(); }}));
+  panel.appendChild(card);
+  panel.scrollIntoView({behavior:"smooth"});
+  return results;
+}
+
+/* ============================ BOOT ============================ */
+function boot(){
+  buildNav();
+  const start = Store.get("activeMode", "pipeline");
+  switchMode(MODES.some(function(m){ return m.id === start; }) ? start : "pipeline");
+  document.getElementById("selftest-btn").addEventListener("click", showSelfTest);
+  // expose for headless/manual testing
+  window.AGORA = {runSelfTest:runSelfTest, switchMode:switchMode, CONTENT:CONTENT, buildMockPool:buildMockPool, Store:Store, QZ:QZ};
+  if(location.hash === "#selftest"){ showSelfTest(); }
+}
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+</script>
+</body>
+</html>
