@@ -296,6 +296,24 @@ details.step .body{padding:2px 16px 16px 56px}
 .scratch:focus{border-color:var(--green-d);border-style:solid}
 .scratch-note{font-size:11.5px;color:var(--faint);margin:4px 0 0}
 
+/* ============================ MODE 8 — CODE WALKTHROUGH ============================ */
+.cw-files{margin-bottom:12px}
+.cw-files button{width:auto;height:auto;padding:7px 12px;font-size:12.5px;font-weight:700;border-radius:9px;white-space:normal;text-align:left;line-height:1.25}
+.cw-block{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--shadow);
+}
+.cw-num{font-size:11px;text-transform:uppercase;letter-spacing:1.3px;font-weight:800;color:var(--green);margin-bottom:8px}
+details.cw-expl{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
+details.cw-expl>summary{
+  list-style:none;cursor:pointer;display:flex;gap:8px;align-items:center;
+  font-weight:700;font-size:13px;color:var(--muted);
+}
+details.cw-expl>summary::-webkit-details-marker{display:none}
+details.cw-expl>summary .chev{color:var(--faint);transition:transform .2s ease;font-weight:800}
+details.cw-expl[open]>summary .chev{transform:rotate(90deg)}
+details.cw-expl .cw-body{margin-top:6px}
+
 /* footer + self-test */
 footer.app{
   max-width:var(--maxw);margin:0 auto;padding:0 18px 40px;color:var(--faint);font-size:12.5px;
@@ -710,6 +728,180 @@ const CONTENT = {
       task:"Resample an hourly wide table to daily totals.",
       solution:"daily = wide.resample('D').sum()",
       explain:"Time-aware bucketing on a datetime index; sum gives total daily energy."}
+  ],
+
+  /* ---- Mode 8: code walkthrough — my REAL submitted code, verbatim, in annotated blocks.
+         code = exact source (String.raw preserves quotes/backslashes), does = plain-English,
+         say = one-line spoken version. DO NOT rewrite the code. ---- */
+  codeWalkthrough: [
+    { file:"Task 1 — Extraction & Transformation (Python)", blocks:[
+      { code: String.raw`import requests
+import pandas as pd
+import numpy as np`,
+        does:`Imports the three libraries — requests to call the API, pandas for the data tables, numpy for numeric helpers.`,
+        say:`"I use requests for the API call and pandas for all the data manipulation."` },
+      { code: String.raw`resp = requests.get(
+    "https://api.agora-energy.org/publicdata/api",
+    headers={"api-key": "agora_api_...redacted..."},
+    params={"dataset": "task_generation_h", "from": "2022-10-01", "to": "2022-12-31"},
+    timeout=60,
+)
+print(resp.status_code, resp.json())`,
+        does:`Sends a GET request to the Agora API. The key goes in the HTTP header (the API only accepts it there). The query parameters select the dataset and the Q4-2022 date range. timeout=60 stops it hanging forever. Then it prints the status and body to inspect the response.`,
+        say:`"I call the API with the key in the header — it only authenticates there — and pass the dataset and date range as parameters."` },
+      { code: String.raw`resp.raise_for_status()           # stops here with an error if the server refused
+payload = resp.json()
+print(type(payload))`,
+        does:`raise_for_status() throws if the HTTP request failed (e.g. 404/500). resp.json() parses the JSON body into a Python object; printing its type confirms it is a dict.`,
+        say:`"I fail fast if the request errored, then parse the JSON response."` },
+      { code: String.raw`print(payload.keys())
+for k, v in payload.items():
+    preview = str(v)[:150]
+    print(f"\\n{k!r}  ({type(v).__name__}):  {preview}")`,
+        does:`Inspects the response structure before using it — prints the dict's keys and a short preview of each value, so I can see where the actual data lives (under the data key).`,
+        say:`"Before flattening, I inspect the structure to see how the data is nested."` },
+      { code: String.raw`raw = pd.DataFrame(resp.json()["data"], columns=["date_id", "region", "generation", "value"])
+print(raw.shape)
+raw.head(10)`,
+        does:`The data value is a list of rows like [timestamp, region, generation, value] with no header, so I build a DataFrame and supply the four column names myself, in the order the API returns them.`,
+        say:`"The data came back as bare rows with no header, so I named the four columns myself."` },
+      { code: String.raw`de = raw[raw["region"] == "Germany"].copy()
+de["date_id"] = pd.to_datetime(de["date_id"])   # Making sure it is a real datetime
+de = de.set_index("date_id")`,
+        does:`Filters to Germany only, converts the timestamp text to a real datetime, and sets it as the index so time operations work directly.`,
+        say:`"I keep only Germany, turn the timestamp into a real datetime, and make it the index."` },
+      { code: String.raw`wide = de.pivot_table(index=de.index, columns="generation",
+                      values="value", aggfunc="first")
+wide.index.name = "date_id"`,
+        does:`Reshapes from long to wide — one column per generation type. pivot_table with aggfunc="first" is used (instead of pivot) so any accidental duplicate (timestamp, fuel) pair is handled rather than throwing an error.`,
+        say:`"I pivot so each fuel is its own column, using pivot_table so duplicates don't crash it."` },
+      { code: String.raw`def flag_outliers(col):
+    q1, q3 = col.quantile(0.25), col.quantile(0.75)
+    upper = q3 + 5 * (q3 - q1)     # Only the planted, absurd values exceed it
+    return col.mask(col > upper)
+
+wide = wide.apply(flag_outliers)
+print("Max values after flagging:", wide.max().max())`,
+        does:`For each column, computes the inter-quartile range and flags anything above Q3 + 5×IQR as NaN (mask). This catches the deliberately-planted absurd values without touching real peaks. The print confirms the max is now realistic.`,
+        say:`"I flag outliers per column with a wide IQR fence and set them to NaN — robust because it doesn't rely on the mean."` },
+      { code: String.raw`wide = wide.interpolate(method="time", limit_direction="both")
+wide = wide.ffill().bfill()
+print("Missing cells now:", int(wide.isna().sum().sum()))`,
+        does:`Fills gaps (the missing cells plus the just-flagged outliers) using time-based interpolation — estimating from the neighbouring hours — then forward/back fills any gaps at the very start or end. The print confirms zero missing cells remain.`,
+        say:`"I fill gaps by time interpolation since generation changes smoothly, then edge-fill the ends."` },
+      { code: String.raw`wide.index = wide.index.tz_localize("UTC").tz_convert("Europe/Berlin")
+print(wide.index.min(), "->", wide.index.max())`,
+        does:`Stamps the naive index as UTC, then converts to Berlin local time. Europe/Berlin is DST-aware: +02:00 (CEST) up to 30 Oct 2022, +01:00 (CET) after — so the autumn clock change is handled correctly.`,
+        say:`"I localise to UTC then convert to Europe/Berlin, which handles the daylight-saving switch automatically."` },
+      { code: String.raw`renewable = ["Biomass", "Dam Hydro", "Geothermal", "Other renewables",
+             "Run-of-River Hydro", "Solar", "Wind offshore", "Wind onshore",
+             "Pumped storage generation"]
+non_renewable = ["Hard Coal", "Lignite", "Natural Gas", "Non-renewable waste",
+                 "Nuclear", "Oil", "Other fossil fuel"]
+ren = [c for c in renewable if c in wide.columns]
+non = [c for c in non_renewable if c in wide.columns]
+assert set(ren) | set(non) == set(wide.columns), "An uncategorised column exists!"
+wide["Renewable"] = wide[ren].sum(axis=1)
+wide["Non-renewable"] = wide[non].sum(axis=1)`,
+        does:`Defines the two category lists, keeps only the fuels that actually appear as columns, and asserts that every column is categorised (fails loudly otherwise). Then appends two total columns — the hourly sum of each group.`,
+        say:`"I map every fuel to renewable or non-renewable, assert nothing's left out, then add the two totals."` },
+      { code: String.raw`daily = wide.resample("D").sum()
+print(daily.shape)`,
+        does:`Resamples the hourly wide table to one row per day, summing each column — a separate daily dataset, leaving the hourly one untouched.`,
+        say:`"I resample to daily totals into a separate table."` },
+      { code: String.raw`def to_long(df):
+  long = df.reset_index().melt(id_vars=["date_id"], var_name="generation", value_name="value")
+  long.insert(1, "region", "Germany")
+  return long[["date_id", "region", "generation", "value"]]
+
+hourly_long = to_long(wide)
+daily_long  = to_long(daily)`,
+        does:`A helper that melts a wide table back to long format, re-inserts the region column, and fixes the column order to the required [date_id, region, generation, value]. Applied to both tables.`,
+        say:`"I melt both tables back to the required long four-column shape."` },
+      { code: String.raw`hourly_long.to_csv("hourly_long.csv", index=False)
+daily_long.to_csv("daily_long.csv", index=False)
+print("Saved")`,
+        does:`Writes the two cleaned tables to CSV — the hand-off files that the Task 2 loader reads.`,
+        say:`"I save both cleaned tables to CSV for the database load step."` }
+    ]},
+    { file:"Views (SQL)", blocks:[
+      { code: String.raw`CREATE OR REPLACE VIEW wind_solar_comp_h AS
+SELECT date_id,
+       CASE WHEN wind > solar THEN 1
+            WHEN wind = solar THEN 0
+            ELSE -1 END AS value
+FROM (
+    SELECT date_id,
+           COALESCE(SUM(value) FILTER (WHERE generation IN ('Wind onshore','Wind offshore')), 0) AS wind,
+           COALESCE(SUM(value) FILTER (WHERE generation = 'Solar'), 0) AS solar
+    FROM pow_gen_de_h
+    GROUP BY date_id
+) t;`,
+        does:`The inner query sums the wind rows (onshore+offshore) and the solar rows per timestamp, using FILTER for conditional aggregation and COALESCE(...,0) so a missing sum becomes 0. The outer query compares them with CASE to return 1 (wind > solar), 0 (equal) or -1 (solar greater).`,
+        say:`"Because the table's long, I sum wind and solar per timestamp in a subquery, then compare them to return 1, 0 or -1."` },
+      { code: String.raw`CREATE OR REPLACE VIEW pow_gen_de_m AS
+SELECT date_trunc('month', date_id)::date AS date_id,
+       region, generation, SUM(value) AS value
+FROM pow_gen_de_d
+GROUP BY date_trunc('month', date_id), region, generation;`,
+        does:`Builds monthly totals from the daily table. date_trunc('month', ...) rounds each date to the first of its month, so grouping on it collapses the days into one monthly total per region and fuel.`,
+        say:`"Monthly totals from the daily table, using date_trunc to group by month."` },
+      { code: String.raw`CREATE OR REPLACE VIEW pow_gen_share_de_h AS
+SELECT date_id, region, generation,
+       100.0 * value / NULLIF(SUM(value) OVER (PARTITION BY date_id), 0) AS value
+FROM pow_gen_de_h
+WHERE generation NOT IN ('Renewable','Non-renewable');`,
+        does:`Each source's percentage of the hour's total. The window function SUM(value) OVER (PARTITION BY date_id) gives the per-timestamp total without collapsing rows; 100.0 * forces decimal division; NULLIF(...,0) avoids divide-by-zero. The WHERE excludes the Renewable/Non-renewable total rows so the denominator isn't doubled.`,
+        say:`"Hourly share per source via a window function, and I exclude the total rows so the percentages sum to 100."` }
+    ]},
+    { file:"Roles & Users (SQL)", blocks:[
+      { code: String.raw`CREATE ROLE admin       WITH SUPERUSER;
+CREATE ROLE user_create WITH NOLOGIN;
+CREATE ROLE user_read   WITH NOLOGIN;`,
+        does:`Creates the three roles. admin is a superuser; user_create and user_read are NOLOGIN containers for privileges (not used to log in directly).`,
+        say:`"Three roles — a superuser, a create role, and a read-only role — the two non-admin ones are NOLOGIN containers."` },
+      { code: String.raw`GRANT USAGE, CREATE ON SCHEMA public TO user_create;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO user_create;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+      GRANT SELECT ON TABLES TO user_create;`,
+        does:`Grants user_create the right to use and create objects in the public schema, read all current tables, and — via ALTER DEFAULT PRIVILEGES — automatically read tables created in the future too.`,
+        say:`"user_create can create objects and read tables, including ones made later, via default privileges."` },
+      { code: String.raw`GRANT USAGE ON SCHEMA public TO user_read;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO user_read;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+      GRANT SELECT ON TABLES TO user_read;`,
+        does:`Gives user_read read-only access — usage on the schema and SELECT on current and future tables, but no create or write.`,
+        say:`"user_read is read-only — SELECT on current and future tables, nothing more."` },
+      { code: String.raw`CREATE ROLE administrator WITH LOGIN SUPERUSER PASSWORD 'administrator_pass';
+GRANT admin TO administrator;
+CREATE ROLE user_1 WITH LOGIN PASSWORD 'user_1_pass' IN ROLE user_create;
+CREATE ROLE user_2 WITH LOGIN PASSWORD 'user_2_pass' IN ROLE user_read;`,
+        does:`Creates the three login users. administrator is given SUPERUSER directly (because the superuser attribute is not inherited through membership of admin). user_1 and user_2 are login users that inherit their privileges from user_create and user_read respectively.`,
+        say:`"The three users log in; administrator gets superuser directly because that attribute isn't inherited, while user_1 and user_2 inherit their rights from the roles."` }
+    ]},
+    { file:"Load script (Python)", blocks:[
+      { code: String.raw`import pandas as pd
+from sqlalchemy import create_engine, text
+
+hourly = pd.read_csv("hourly_long.csv")
+daily  = pd.read_csv("daily_long.csv")
+hourly["date_id"] = pd.to_datetime(hourly["date_id"], utc=True)
+daily["date_id"]  = pd.to_datetime(daily["date_id"], utc=True)`,
+        does:`Reads the two cleaned CSVs and parses the date_id column back into timezone-aware datetimes with utc=True, so the +02:00/+01:00 offset the data carries is preserved on load.`,
+        say:`"I read the two CSVs and parse the timestamps as UTC-aware so the timezone offset is kept."` },
+      { code: String.raw`engine = create_engine("postgresql+psycopg2://user_1:user_1_pass@localhost:5433/agora")`,
+        does:`Creates a SQLAlchemy engine pointing at the local PostgreSQL database. Note the port is 5433 — I had moved the native server off 5432 because a Docker container was already holding that port.`,
+        say:`"I create the SQLAlchemy engine; the port is 5433 because Docker was holding 5432."` },
+      { code: String.raw`with engine.begin() as conn:
+    conn.execute(text("TRUNCATE pow_gen_de_h, pow_gen_de_d"))`,
+        does:`Truncates both target tables inside a transaction before loading, so re-running the script can't create duplicate rows — the load is idempotent. (I hit doubled row counts once, which is how I learned to do this.)`,
+        say:`"I truncate both tables first so re-running stays idempotent — no duplicates."` },
+      { code: String.raw`hourly.to_sql("pow_gen_de_h", engine, if_exists="append", index=False)
+daily.to_sql("pow_gen_de_d", engine, if_exists="append", index=False)
+print("Loaded")`,
+        does:`Appends the rows into the pre-created tables. if_exists="append" keeps the explicit TIMESTAMPTZ/TEXT/DOUBLE schema I defined, rather than replace which would drop the tables and let pandas guess the column types.`,
+        say:`"I append into my pre-defined schema so the column types are preserved, not guessed."` }
+    ]}
   ]
 };
 
@@ -1387,6 +1579,54 @@ function renderLive(root){
   root.replaceChildren(frag);
 }
 
+/* ---- MODE 8: Code Walkthrough ---- */
+const CW = { file:0, allOpen:false };
+function renderCodeWalkthrough(root){
+  const files = CONTENT.codeWalkthrough;
+  if(CW.file >= files.length) CW.file = 0;
+  const frag = document.createDocumentFragment();
+  frag.appendChild(el("h2", {class:"mode-title", text:"Code Walkthrough"}));
+  frag.appendChild(el("p", {class:"mode-lede", text:"Rehearse “walk me through your code”. Read each block, explain it OUT LOUD, then expand to check yourself. Explanations are collapsed by default so you produce the answer first."}));
+
+  // file selector
+  const fsel = el("div", {class:"jumpbar cw-files"});
+  files.forEach(function(f, i){
+    fsel.appendChild(el("button", {class:(i === CW.file ? "cur" : ""), text:f.file, onclick:function(){ CW.file = i; renderCodeWalkthrough(root); }}));
+  });
+  frag.appendChild(fsel);
+
+  // show/hide all toggle + file counter
+  frag.appendChild(el("div", {class:"spread", style:"margin-bottom:14px"}, [
+    el("button", {class:"btn sm", text:(CW.allOpen ? "Hide all explanations" : "Show all explanations"), onclick:function(){ CW.allOpen = !CW.allOpen; renderCodeWalkthrough(root); }}),
+    el("span", {class:"counter-lg", text:"File " + (CW.file + 1) + " / " + files.length})
+  ]));
+
+  const file = files[CW.file];
+  file.blocks.forEach(function(b, i){
+    const card = el("div", {class:"cw-block"});
+    card.appendChild(el("div", {class:"cw-num", text:"Block " + (i + 1)}));
+    card.appendChild(codeBlock(b.code));               // my real code, verbatim + tinted
+    const det = el("details", {class:"cw-expl"});
+    if(CW.allOpen) det.open = true;
+    det.appendChild(el("summary", null, [el("span",{class:"chev",text:"›"}), el("span",{text:"Explanation — try saying it first"})]));
+    const body = el("div", {class:"cw-body"});
+    body.appendChild(el("div", {class:"block did"}, [el("div",{class:"blab",text:"What this does"}), el("div",{class:"bv",text:b.does})]));
+    body.appendChild(el("div", {class:"block why"}, [el("div",{class:"blab",text:"Say this"}), el("div",{class:"bv",text:b.say})]));
+    det.appendChild(body);
+    card.appendChild(det);
+    frag.appendChild(card);
+  });
+
+  // prev/next file
+  frag.appendChild(el("div", {class:"navrow"}, [
+    el("button", {class:"btn ghost sm", text:"‹ Prev file", onclick:function(){ CW.file = (CW.file - 1 + files.length) % files.length; renderCodeWalkthrough(root); }}),
+    el("span", {class:"counter-lg", text:file.file}),
+    el("button", {class:"btn ghost sm", text:"Next file ›", onclick:function(){ CW.file = (CW.file + 1) % files.length; renderCodeWalkthrough(root); }})
+  ]));
+
+  root.replaceChildren(frag);
+}
+
 /* ============================ NAV / ROUTING ============================ */
 const MODES = [
   {id:"pipeline",  label:"1 · Dataset & Pipeline", group:"The Assessment",    render:renderPipeline},
@@ -1395,7 +1635,8 @@ const MODES = [
   {id:"reasoning", label:"4 · Reasoning Drill",    group:"The Assessment",    render:renderReasoning},
   {id:"mock",      label:"5 · Mock Interview",     group:"The Assessment",    render:renderMock},
   {id:"cvdrill",   label:"6 · CV & Project Drill", group:"Me & The Interview",render:renderCvDrill},
-  {id:"live",      label:"7 · Live Challenge",     group:"Me & The Interview",render:renderLive}
+  {id:"live",      label:"7 · Live Challenge",     group:"Me & The Interview",render:renderLive},
+  {id:"codewalk",  label:"8 · Code Walkthrough",   group:"My Code",           render:renderCodeWalkthrough}
 ];
 let activeMode = null;
 function buildNav(){
@@ -1452,6 +1693,39 @@ function runSelfTest(){
   });
   check("Fuel types = 16", function(){ return {ok:FUEL_TYPES.length === 16, msg:"got " + FUEL_TYPES.length}; });
   check("Views = 3", function(){ return CONTENT.views.length === 3; });
+  check("Code-walkthrough files = 4", function(){ return {ok:CONTENT.codeWalkthrough.length === 4, msg:"got " + CONTENT.codeWalkthrough.length}; });
+  check("Code-walkthrough total blocks >= 25", function(){
+    const n = CONTENT.codeWalkthrough.reduce(function(s, f){ return s + f.blocks.length; }, 0);
+    return {ok:n >= 25, msg:"got " + n};
+  });
+  check("Every code block has code/does/say", function(){
+    return CONTENT.codeWalkthrough.every(function(f){
+      return f.file && f.blocks.length > 0 && f.blocks.every(function(b){
+        return typeof b.code === "string" && b.code.length > 0 &&
+               typeof b.does === "string" && b.does.length > 0 &&
+               typeof b.say  === "string" && b.say.length  > 0;
+      });
+    });
+  });
+  check("My code reproduced verbatim (key lines present)", function(){
+    const all = CONTENT.codeWalkthrough.map(function(f){ return f.blocks.map(function(b){ return b.code; }).join("\n"); }).join("\n");
+    const must = [
+      "import requests",
+      "\"https://api.agora-energy.org/publicdata/api\"",
+      "print(f\"\\\\n{k!r}  ({type(v).__name__}):  {preview}\")",   // the literal \\n is preserved
+      "wide = de.pivot_table(index=de.index, columns=\"generation\",",
+      "upper = q3 + 5 * (q3 - q1)",
+      "wide.index = wide.index.tz_localize(\"UTC\").tz_convert(\"Europe/Berlin\")",
+      "assert set(ren) | set(non) == set(wide.columns), \"An uncategorised column exists!\"",
+      "CASE WHEN wind > solar THEN 1",
+      "100.0 * value / NULLIF(SUM(value) OVER (PARTITION BY date_id), 0) AS value",
+      "WHERE generation NOT IN ('Renewable','Non-renewable');",
+      "CREATE ROLE administrator WITH LOGIN SUPERUSER PASSWORD 'administrator_pass';",
+      "to_sql(\"pow_gen_de_h\", engine, if_exists=\"append\", index=False)"
+    ];
+    const missing = must.filter(function(s){ return all.indexOf(s) < 0; });
+    return {ok:missing.length === 0, msg:missing.length ? "MISSING: " + missing[0] : "all key lines present"};
+  });
 
   // 2. storage roundtrip + graceful failure
   check("localStorage roundtrip", function(){
@@ -1506,14 +1780,20 @@ function runSelfTest(){
     });
   });
 
-  // 7. no external network references in the document
-  check("No external http(s) references in document", function(){
-    // Scan the rendered document for any external protocol literal. The scan pattern
-    // is assembled from fragments so the regex source itself never spells out a literal
-    // "http" + "://" that the scan could match (which would be a false positive).
-    const scan = new RegExp("http" + "s?" + ":" + "\\/" + "\\/", "gi");
-    const matches = document.documentElement.outerHTML.match(scan) || [];
-    return {ok:matches.length === 0, msg:matches.length + " external protocol occurrences"};
+  // 7. no external network references — i.e. nothing the browser would actually fetch
+  check("No external resource-loading elements", function(){
+    // Structural DOM query (not a source-text scan, so it can't match this test's own code).
+    const sel = "script[src], link[href], img[src], iframe[src], source[src], audio[src], video[src], embed[src], object[data], track[src], use[href]";
+    const n = document.querySelectorAll(sel).length;
+    return {ok:n === 0, msg:n + " external-loading element(s)"};
+  });
+  check("Only external URL is the documented (never-fetched) API in the code", function(){
+    // The verbatim Code Walkthrough shows the real Agora API URL as TEXT — it is never fetched.
+    // Assert every http(s) URL in the document is that documented host, and nothing else.
+    const scan = new RegExp("http" + "s?" + ":\\/\\/[^\\s\"'<>)]+", "gi");
+    const urls = document.documentElement.outerHTML.match(scan) || [];
+    const stray = urls.filter(function(u){ return u.indexOf("api.agora-energy.org") < 0; });
+    return {ok:stray.length === 0, msg:urls.length + " url(s); stray: " + (stray.join(",") || "none")};
   });
 
   // restore: switch back to active mode after render tests
@@ -1546,7 +1826,7 @@ function boot(){
   switchMode(MODES.some(function(m){ return m.id === start; }) ? start : "pipeline");
   document.getElementById("selftest-btn").addEventListener("click", showSelfTest);
   // expose for headless/manual testing
-  window.AGORA = {runSelfTest:runSelfTest, switchMode:switchMode, CONTENT:CONTENT, buildMockPool:buildMockPool, Store:Store, QZ:QZ};
+  window.AGORA = {runSelfTest:runSelfTest, switchMode:switchMode, CONTENT:CONTENT, buildMockPool:buildMockPool, Store:Store, QZ:QZ, CW:CW};
   if(location.hash === "#selftest"){ showSelfTest(); }
 }
 if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
